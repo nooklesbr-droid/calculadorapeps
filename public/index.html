@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora PEPS</title>
+    <style>
+        /* Cores baseadas no design do Catálogo VIP */
+        :root {
+            --cor-fundo-site: #11161d;
+            --cor-fundo-card: #1a222c;
+            --cor-azul-vip: #00aeef;
+            --cor-azul-hover: #0099d4;
+            --cor-texto-principal: #ffffff;
+            --cor-texto-secundario: #a0aab5;
+            --cor-borda: #2c3e50;
+            --cor-erro: #dc3545; /* Cor de erro vermelha */
+        }
+
+        body { 
+            background-color: var(--cor-fundo-site); 
+            color: var(--cor-texto-principal); 
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; 
+            padding: 40px 20px; 
+            display: flex;
+            justify-content: center;
+        }
+
+        .calculadora-container {
+            background-color: var(--cor-fundo-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .form-section { flex: 1.5; }
+        .grafico-section { flex: 1; }
+
+        .logo-texto {
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-top: 0;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+        .logo-vip { color: var(--cor-azul-vip); }
+
+        .form-label { 
+            display: block; 
+            margin-bottom: 10px; 
+            color: var(--cor-texto-secundario); 
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        /* Estilo dos Grupos de Botões */
+        .grupo-container { margin-bottom: 25px; }
+        .botoes-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+        }
+        .btn-opcao {
+            background-color: transparent;
+            border: 1px solid var(--cor-borda);
+            color: var(--cor-texto-secundario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .btn-opcao:hover { border-color: var(--cor-azul-vip); color: var(--cor-texto-principal); }
+        .btn-opcao.ativo {
+            background-color: var(--cor-azul-vip);
+            border-color: var(--cor-azul-vip);
+            color: white;
+        }
+        
+        /* Inputs gerais */
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--cor-fundo-site);
+            border: 1px solid var(--cor-borda);
+            color: var(--cor-texto-principal);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--cor-azul-vip);
+        }
+
+        .input-customizado {
+            width: 110px !important;
+            margin-bottom: 0 !important;
+            padding: 8px !important;
+        }
+
+        /* Botão Principal */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn-calcular {
+            width: 250px;
+            padding: 15px;
+            background-color: var(--cor-azul-vip);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+        .btn-calcular:hover { background-color: var(--cor-azul-hover); }
+
+        /* Estilos da Seringa */
+        .grafico-section h3 { margin-top: 0; color: var(--cor-texto-secundario); font-weight: 500;}
+        .seringa-container {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            margin-top: 20px;
+            background-color: var(--cor-fundo-site);
+            border-radius: 8px;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            border: 1px solid var(--cor-borda);
+            display: flex;
+            align-items: center;
+        }
+        .seringa-svg { width: 100%; height: 100%; }
+        #liquido {
+            fill: var(--cor-azul-vip);
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        /* QUADROS DE RESULTADOS */
+        .resultados-wrapper {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .resultados-principal {
+            background-color: #161e27;
+            padding: 25px 20px;
+            border-radius: 8px;
+            border: 2px solid var(--cor-azul-vip);
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 174, 239, 0.15);
+        }
+        .resultados-principal p { 
+            margin: 5px 0; 
+            color: var(--cor-texto-principal); 
+            font-size: 1.1em; 
+            font-weight: 500;
+        }
+        .resultados-principal strong { 
+            display: block;
+            color: var(--cor-azul-vip); 
+            font-size: 2.2em;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            line-height: 1;
+        }
+        /* Cor vermelha para destacar quando a dose for maior */
+        .resultados-principal.erro-limite {
+            border-color: var(--cor-erro);
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);
+        }
+        .resultados-principal.erro-limite strong {
+            color: var(--cor-erro);
+        }
+
+        .resultados-secundario {
+            background-color: var(--cor-fundo-site);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--cor-borda);
+            text-align: center;
+        }
+        .resultados-secundario p { 
+            margin: 8px 0; 
+            color: var(--cor-texto-secundario); 
+            font-size: 0.9em; 
+        }
+        .resultados-secundario strong { 
+            color: var(--cor-texto-principal); 
+            font-size: 1.1em; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculadora-container">
+        <div class="form-section">
+            <h1 class="logo-texto">Calculadora <span class="logo-vip">PEPS</span></h1>
+
+            <div class="grupo-container">
+                <label class="form-label">Conteúdo por vial (mg)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 5, this)">5</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 10, this)">10</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 15, this)">15</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 20, this)">20</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 30, this)">30</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 40, this)">40</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 60, this)">60</button>
+                    <input type="number" id="vialCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('vial', this.value)" step="0.1">
+                </div>
+            </div>
+
+            <div class="grupo-container">
+                <label class="form-label">Quantidade de Diluente (ml)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 0.5, this)">0,5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 1, this)">1</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 1.5, this)">1,5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 2, this)">2</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 2.5, this)">2,5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 3, this)">3</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 5, this)">5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 10, this)">10</button>
+                    <input type="number" id="diluenteCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('diluente', this.value)" step="0.1">
+                </div>
+            </div>
+
+            <div class="grupo-container">
+                <label class="form-label">Tamanho da Seringa (ml)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.3, this)">0.3 (30 UI)</button>
+                    <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.5, this)">0.5 (50 UI)</button>
+                    <button type="button" class="btn-opcao btn-seringa ativo" onclick="selecionarBotao('seringa', 1, this)">1.0 (100 UI)</button>
+                    <input type="number" id="seringaCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('seringa', this.value)" step="0.1">
+                </div>
+            </div>
+
+            <div class="grupo-container">
+                <label class="form-label">Dose Desejada (mg)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 0.25, this)">0,25</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 0.5, this)">0,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 1, this)">1</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 1.7, this)">1,7</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2, this)">2</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2.4, this)">2,4</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2.5, this)">2,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 4, this)">4</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 5, this)">5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 7.5, this)">7,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 10, this)">10</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 12, this)">12</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 12.5, this)">12,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 15, this)">15</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 17.5, this)">17,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 20, this)">20</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 25, this)">25</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 30, this)">30</button>
+                    <input type="number" id="doseCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('dose', this.value)" step="0.1">
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn-calcular" onclick="realizarCalculo()">Calcular</button>
+            </div>
+        </div>
+
+        <div class="grafico-section">
+            <h3>Visualização da Aplicação</h3>
+            <div class="seringa-container">
+                <svg class="seringa-svg" viewBox="0 0 520 130" preserveAspectRatio="xMidYMid meet">
+                    <rect x="60" y="40" width="400" height="50" fill="#11161d" rx="5" ry="5" />
+                    <rect id="liquido" x="60" y="40" width="0" height="50" rx="5" ry="5" />
+                    <g fill="none" stroke="#34495e" stroke-width="2">
+                        <rect x="60" y="40" width="400" height="50" rx="5" ry="5" />
+                        <path d="M 460 60 L 500 63 L 460 66 Z" fill="#34495e"/>
+                    </g>
+                    <g id="marcas-seringa"></g>
+                </svg>
+            </div>
+
+            <div class="resultados-wrapper" id="areaResultadosWrapper">
+                
+                <div class="resultados-principal" id="blocoPrincipal">
+                    <p>Puxar na Seringa:</p>
+                    <strong id="resVolume">-- ml</strong>
+                    
+                    <p style="margin-top: 15px;">Equivalente na Seringa de Insulina:</p>
+                    <strong id="resUnidades" style="margin-bottom: 0;">-- UI</strong>
+                </div>
+
+                <div class="resultados-secundario">
+                    <p>Rendimento Estimado do Frasco:</p>
+                    <strong id="resRendimento">-- doses</strong>
+                    
+                    <p style="margin-top: 12px;">Duração (1 aplicação/semana):</p>
+                    <strong id="resDuracao">--</strong>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const escolhas = { vial: null, diluente: null, dose: null, seringa: 1 };
+
+        function selecionarBotao(categoria, valor, elementoBotao) {
+            escolhas[categoria] = valor;
+            document.getElementById(`${categoria}Customizado`).value = ''; 
+            const botoes = document.querySelectorAll(`.btn-${categoria}`);
+            botoes.forEach(btn => btn.classList.remove('ativo'));
+            elementoBotao.classList.add('ativo');
+
+            if (categoria === 'seringa') {
+                document.getElementById('liquido').setAttribute('width', '0');
+                document.getElementById('areaResultadosWrapper').style.display = 'none';
+                document.getElementById('blocoPrincipal').classList.remove('erro-limite');
+                atualizarMarcasSeringa(null);
+            }
+        }
+
+        function selecionarCustomizado(categoria, valor) {
+            escolhas[categoria] = parseFloat(valor.replace(',', '.')); 
+            const botoes = document.querySelectorAll(`.btn-${categoria}`);
+            botoes.forEach(btn => btn.classList.remove('ativo'));
+
+            if (categoria === 'seringa') {
+                document.getElementById('liquido').setAttribute('width', '0');
+                document.getElementById('areaResultadosWrapper').style.display = 'none';
+                document.getElementById('blocoPrincipal').classList.remove('erro-limite');
+                atualizarMarcasSeringa(null);
+            }
+        }
+
+        function atualizarMarcasSeringa(doseMlCalculada = null) {
+            const tamanho = escolhas.seringa || 1;
+            const grupoMarcas = document.getElementById('marcas-seringa');
+            grupoMarcas.innerHTML = ''; 
+
+            let passoMl, numMarcas;
+            if (tamanho === 1) { passoMl = 0.1; numMarcas = 10; }
+            else if (tamanho === 0.5) { passoMl = 0.05; numMarcas = 10; }
+            else if (tamanho === 0.3) { passoMl = 0.05; numMarcas = 6; }
+            else { passoMl = tamanho / 10; numMarcas = 10; } 
+
+            const larguraTotal = 400; 
+
+            for (let i = 1; i <= numMarcas; i++) {
+                let valorMl = (i * passoMl).toFixed(2);
+                valorMl = parseFloat(valorMl); 
+                let unidades = Math.round(valorMl * 100);
+                let pos_x = 60 + (valorMl / tamanho) * larguraTotal;
+
+                let linhaTop = `<line x1="${pos_x}" y1="40" x2="${pos_x}" y2="50" stroke="#a0aab5" stroke-width="1.5" />`;
+                let linhaBottom = `<line x1="${pos_x}" y1="80" x2="${pos_x}" y2="90" stroke="#a0aab5" stroke-width="1.5" />`;
+                
+                let textHtml = '';
+                let deveMostrarTexto = false;
+                let tamanhoFonte = 14; 
+                let corTexto = "#a0aab5";
+
+                if (doseMlCalculada !== null) {
+                    let doseUi = doseMlCalculada * 100;
+                    let stepUi = Math.round(passoMl * 100);
+                    
+                    let limiteInferiorUi = Math.floor(doseUi / stepUi) * stepUi;
+                    let limiteSuperiorUi = Math.ceil(doseUi / stepUi) * stepUi;
+
+                    if (limiteInferiorUi === limiteSuperiorUi) {
+                        if (unidades === limiteInferiorUi - stepUi || unidades === limiteInferiorUi || unidades === limiteInferiorUi + stepUi) {
+                            deveMostrarTexto = true;
+                        }
+                    } else {
+                        if (unidades === limiteInferiorUi || unidades === limiteSuperiorUi) {
+                            deveMostrarTexto = true;
+                        }
+                    }
+
+                    if (deveMostrarTexto) {
+                        tamanhoFonte = 20; 
+                        corTexto = "#ffffff";
+                    }
+
+                } else {
+                    if (i === numMarcas) {
+                        deveMostrarTexto = true;
+                    }
+                }
+
+                if (deveMostrarTexto) {
+                    let displayMl = valorMl.toString().replace('0.', '.');
+                    textHtml += `<text x="${pos_x}" y="32" fill="${corTexto}" font-size="${tamanhoFonte}" font-weight="bold" text-anchor="middle">${displayMl}</text>`;
+                    textHtml += `<text x="${pos_x}" y="112" fill="${corTexto}" font-size="${tamanhoFonte}" font-weight="bold" text-anchor="middle">${unidades}</text>`;
+                }
+
+                grupoMarcas.innerHTML += linhaTop + linhaBottom + textHtml;
+            }
+
+            grupoMarcas.innerHTML += `<text x="50" y="32" fill="#a0aab5" font-size="16" font-weight="bold" text-anchor="end">ml:</text>`;
+            grupoMarcas.innerHTML += `<text x="50" y="112" fill="#a0aab5" font-size="16" font-weight="bold" text-anchor="end">UI:</text>`;
+        }
+
+        window.onload = () => atualizarMarcasSeringa(null);
+
+        async function realizarCalculo() {
+            if (!escolhas.vial || !escolhas.diluente || !escolhas.dose || !escolhas.seringa) {
+                alert("Por favor, selecione as opções de Vial, Diluente, Seringa e Dose.");
+                return;
+            }
+
+            const dados = {
+                dosagemTotalMg: escolhas.vial,
+                diluicaoMl: escolhas.diluente,
+                tamanhoSeringaMl: escolhas.seringa,
+                doseDesejadaMg: escolhas.dose
+            };
+
+            try {
+                const resposta = await fetch('/api/calcular-dose', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await resposta.json();
+
+                if (resultado.erro) {
+                    alert(resultado.erro);
+                    return;
+                }
+
+                // 1. FORMATAÇÃO BRASILEIRA: Transforma o "1.000" do backend em "1" com vírgula (se tiver decimal)
+                const doseFloat = parseFloat(resultado.doseMl);
+                const volumeFormatado = doseFloat.toString().replace('.', ',');
+
+                // Mostra a área de resultados
+                document.getElementById('areaResultadosWrapper').style.display = 'flex';
+                const blocoPrincipal = document.getElementById('blocoPrincipal');
+                const grupoMarcas = document.getElementById('marcas-seringa');
+
+                // Preenche os dados nos cards
+                document.getElementById('resVolume').innerText = `${volumeFormatado} ml`;
+                document.getElementById('resUnidades').innerText = `${resultado.doseUnidades} UI`;
+
+                // Cálculo das Sugestões
+                const totalDoses = dados.dosagemTotalMg / dados.doseDesejadaMg;
+                const dosesFormatado = Number.isInteger(totalDoses) ? totalDoses : totalDoses.toFixed(1);
+                
+                const meses = totalDoses / 4;
+                const mesesFormatado = Number.isInteger(meses) ? meses : meses.toFixed(1);
+
+                const textoSemanas = dosesFormatado == 1 ? "1 semana" : `${dosesFormatado} semanas`;
+                const textoMeses = mesesFormatado == 1 ? "1 mês" : `${mesesFormatado} meses`;
+
+                document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
+                document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
+
+                // 2. LÓGICA DE ERRO NA SERINGA: Verifica se a dose calculada cabe na seringa
+                if (doseFloat > dados.tamanhoSeringaMl) {
+                    // Limpa a seringa e desenha a caixa vermelha de erro
+                    document.getElementById('liquido').setAttribute('width', '0');
+                    blocoPrincipal.classList.add('erro-limite'); // Deixa o card com borda vermelha também
+
+                    grupoMarcas.innerHTML = `
+                        <rect x="60" y="40" width="400" height="50" fill="rgba(220, 53, 69, 0.2)" rx="5" ry="5" />
+                        <text x="260" y="65" fill="#ff4d4d" font-size="20" font-weight="bold" text-anchor="middle">ERRO: DOSE MAIOR QUE A SERINGA</text>
+                        <text x="260" y="85" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="middle">Escolha uma seringa maior</text>
+                    `;
+                } else {
+                    // Comportamento normal: preenche e atualiza a escala
+                    blocoPrincipal.classList.remove('erro-limite');
+                    atualizarMarcasSeringa(doseFloat);
+
+                    let porcentagem = (doseFloat / dados.tamanhoSeringaMl) * 100;
+                    const larguraPreenchimento = (porcentagem / 100) * 400;
+                    document.getElementById('liquido').setAttribute('width', larguraPreenchimento);
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao calcular. O servidor Node.js (tela preta) está rodando?");
+            }
+        }
+    </script>
+</body>
+</html>
