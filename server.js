@@ -1,37 +1,34 @@
-// Servidor Node.js simples com Express
 const express = require('express');
-const cors = require('cors'); // Para permitir que o frontend acesse a API
+const cors = require('cors');
+const path = require('path'); // Nova biblioteca padrão do Node
 const app = express();
-const port = 3000;
+
+// O Render define a porta automaticamente, por isso usamos process.env.PORT
+const port = process.env.PORT || 3000; 
 
 app.use(cors());
 app.use(express.json());
 
-// Rota para calcular a dose
+// Diz para o Express servir os arquivos da pasta "public" (seu index.html)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Nossa rota de cálculo intocada
 app.post('/api/calcular-dose', (req, res) => {
-    // Recebe os dados do frontend
     const { dosagemTotalMg, diluicaoMl, doseDesejadaMg } = req.body;
 
-    // Validação básica
     if (!dosagemTotalMg || !diluicaoMl || !doseDesejadaMg || diluicaoMl <= 0) {
         return res.status(400).json({ erro: 'Dados de entrada inválidos.' });
     }
 
     try {
-        // 1. Calcular a Concentração
-        const concentracao = dosagemTotalMg / diluicaoMl; // mg/mL
+        const concentracao = dosagemTotalMg / diluicaoMl; 
+        const doseMl = doseDesejadaMg / concentracao; 
+        const doseUnidades = Math.round(doseMl * 100);
 
-        // 2. Calcular a Dose em mL
-        const doseMl = doseDesejadaMg / concentracao; // mL
-
-        // 3. (Opcional) Converter para unidades se for seringa de insulina (1mL = 100U)
-        const doseUnidades = doseMl * 100;
-
-        // Retornar os resultados
         res.json({
             concentracaoMgMl: concentracao.toFixed(2),
-            doseMl: doseMl.toFixed(3), // Arredondar para precisão médica
-            doseUnidades: Math.round(doseUnidades)
+            doseMl: doseMl.toFixed(3), 
+            doseUnidades: doseUnidades
         });
 
     } catch (error) {
@@ -40,5 +37,5 @@ app.post('/api/calcular-dose', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Servidor de cálculo rodando em http://localhost:${port}`);
+    console.log(`Servidor rodando na porta ${port}`);
 });
