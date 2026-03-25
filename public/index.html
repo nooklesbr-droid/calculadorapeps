@@ -13,7 +13,7 @@
             --cor-texto-principal: #ffffff;
             --cor-texto-secundario: #a0aab5;
             --cor-borda: #2c3e50;
-            --cor-erro: #dc3545; /* Cor de erro vermelha */
+            --cor-erro: #dc3545;
         }
 
         body { 
@@ -32,7 +32,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             width: 100%;
             max-width: 900px;
-            display: flex;
+            display: flex; /* Coloca as colunas lado a lado no PC */
             gap: 40px;
         }
 
@@ -178,7 +178,6 @@
             margin-bottom: 15px;
             line-height: 1;
         }
-        /* Cor vermelha para destacar quando a dose for maior */
         .resultados-principal.erro-limite {
             border-color: var(--cor-erro);
             box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);
@@ -202,6 +201,33 @@
         .resultados-secundario strong { 
             color: var(--cor-texto-principal); 
             font-size: 1.1em; 
+        }
+
+        /* =========================================================
+           ADAPTAÇÃO PARA CELULAR (RESPONSIVIDADE)
+           ========================================================= */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px 10px; /* Reduz a borda preta externa no celular */
+            }
+            .calculadora-container {
+                flex-direction: column; /* Empilha as coisas em vez de deixar lado a lado */
+                padding: 20px; /* Reduz o espaçamento interno do card */
+                gap: 20px;
+            }
+            .logo-texto {
+                text-align: center; /* Centraliza o título no celular */
+                font-size: 2.2em;
+            }
+            .btn-calcular {
+                width: 100%; /* O botão fica mais largo, mais fácil de apertar */
+            }
+            .seringa-container {
+                padding: 15px 5px; /* Reduz o padding da caixa da seringa */
+            }
+            .resultados-principal strong {
+                font-size: 1.8em; /* Ajusta o tamanho da fonte do resultado final para não vazar a tela */
+            }
         }
     </style>
 </head>
@@ -431,6 +457,7 @@
             };
 
             try {
+                // Aqui o fetch usa a rota relativa, pronto para o Render
                 const resposta = await fetch('/api/calcular-dose', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -444,20 +471,16 @@
                     return;
                 }
 
-                // 1. FORMATAÇÃO BRASILEIRA: Transforma o "1.000" do backend em "1" com vírgula (se tiver decimal)
                 const doseFloat = parseFloat(resultado.doseMl);
                 const volumeFormatado = doseFloat.toString().replace('.', ',');
 
-                // Mostra a área de resultados
                 document.getElementById('areaResultadosWrapper').style.display = 'flex';
                 const blocoPrincipal = document.getElementById('blocoPrincipal');
                 const grupoMarcas = document.getElementById('marcas-seringa');
 
-                // Preenche os dados nos cards
                 document.getElementById('resVolume').innerText = `${volumeFormatado} ml`;
                 document.getElementById('resUnidades').innerText = `${resultado.doseUnidades} UI`;
 
-                // Cálculo das Sugestões
                 const totalDoses = dados.dosagemTotalMg / dados.doseDesejadaMg;
                 const dosesFormatado = Number.isInteger(totalDoses) ? totalDoses : totalDoses.toFixed(1);
                 
@@ -470,11 +493,9 @@
                 document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // 2. LÓGICA DE ERRO NA SERINGA: Verifica se a dose calculada cabe na seringa
                 if (doseFloat > dados.tamanhoSeringaMl) {
-                    // Limpa a seringa e desenha a caixa vermelha de erro
                     document.getElementById('liquido').setAttribute('width', '0');
-                    blocoPrincipal.classList.add('erro-limite'); // Deixa o card com borda vermelha também
+                    blocoPrincipal.classList.add('erro-limite'); 
 
                     grupoMarcas.innerHTML = `
                         <rect x="60" y="40" width="400" height="50" fill="rgba(220, 53, 69, 0.2)" rx="5" ry="5" />
@@ -482,7 +503,6 @@
                         <text x="260" y="85" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="middle">Escolha uma seringa maior</text>
                     `;
                 } else {
-                    // Comportamento normal: preenche e atualiza a escala
                     blocoPrincipal.classList.remove('erro-limite');
                     atualizarMarcasSeringa(doseFloat);
 
@@ -493,7 +513,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Erro ao calcular. O servidor Node.js (tela preta) está rodando?");
+                alert("Erro ao calcular. Verifique a conexão com o servidor.");
             }
         }
     </script>
