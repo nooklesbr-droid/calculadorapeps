@@ -13,7 +13,7 @@
             --cor-texto-principal: #ffffff;
             --cor-texto-secundario: #a0aab5;
             --cor-borda: #2c3e50;
-            --cor-erro: #dc3545; /* Cor de erro vermelha */
+            --cor-erro: #dc3545;
         }
 
         body { 
@@ -32,7 +32,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             width: 100%;
             max-width: 900px;
-            display: flex;
+            display: flex; /* Coloca as colunas lado a lado no PC */
             gap: 40px;
         }
 
@@ -178,7 +178,6 @@
             margin-bottom: 15px;
             line-height: 1;
         }
-        /* Cor vermelha para destacar quando a dose for maior */
         .resultados-principal.erro-limite {
             border-color: var(--cor-erro);
             box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);
@@ -202,6 +201,33 @@
         .resultados-secundario strong { 
             color: var(--cor-texto-principal); 
             font-size: 1.1em; 
+        }
+
+        /* =========================================================
+           ADAPTAÇÃO PARA CELULAR (RESPONSIVIDADE)
+           ========================================================= */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px 10px; 
+            }
+            .calculadora-container {
+                flex-direction: column; 
+                padding: 20px; 
+                gap: 20px;
+            }
+            .logo-texto {
+                text-align: center; 
+                font-size: 2.2em;
+            }
+            .btn-calcular {
+                width: 100%; 
+            }
+            .seringa-container {
+                padding: 15px 5px; 
+            }
+            .resultados-principal strong {
+                font-size: 1.8em; 
+            }
         }
     </style>
 </head>
@@ -417,48 +443,41 @@
 
         window.onload = () => atualizarMarcasSeringa(null);
 
-        async function realizarCalculo() {
+        // --- NOVA FUNÇÃO DE CÁLCULO LOCAL (Sem servidor Node.js) ---
+        function realizarCalculo() {
+            // Validações
             if (!escolhas.vial || !escolhas.diluente || !escolhas.dose || !escolhas.seringa) {
                 alert("Por favor, selecione as opções de Vial, Diluente, Seringa e Dose.");
                 return;
             }
 
-            const dados = {
-                dosagemTotalMg: escolhas.vial,
-                diluicaoMl: escolhas.diluente,
-                tamanhoSeringaMl: escolhas.seringa,
-                doseDesejadaMg: escolhas.dose
-            };
+            if (escolhas.diluente <= 0) {
+                alert("A diluição deve ser maior que zero.");
+                return;
+            }
 
+            // A Matemática pura acontecendo direto no navegador
             try {
-                const resposta = await fetch('/api/calcular-dose', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
+                const concentracao = escolhas.vial / escolhas.diluente; 
+                let doseMl = escolhas.dose / concentracao; 
+                
+                // Arredonda para 3 casas decimais (ex: 0.16666 vira 0.167)
+                doseMl = parseFloat(doseMl.toFixed(3)); 
+                const doseUnidades = Math.round(doseMl * 100);
 
-                const resultado = await resposta.json();
+                // Formatação para mostrar na tela (padrão Brasil com vírgula)
+                const volumeFormatado = doseMl.toString().replace('.', ',');
 
-                if (resultado.erro) {
-                    alert(resultado.erro);
-                    return;
-                }
-
-                // 1. FORMATAÇÃO BRASILEIRA: Transforma o "1.000" do backend em "1" com vírgula (se tiver decimal)
-                const doseFloat = parseFloat(resultado.doseMl);
-                const volumeFormatado = doseFloat.toString().replace('.', ',');
-
-                // Mostra a área de resultados
+                // Atualizando o HTML com os resultados
                 document.getElementById('areaResultadosWrapper').style.display = 'flex';
                 const blocoPrincipal = document.getElementById('blocoPrincipal');
                 const grupoMarcas = document.getElementById('marcas-seringa');
 
-                // Preenche os dados nos cards
                 document.getElementById('resVolume').innerText = `${volumeFormatado} ml`;
-                document.getElementById('resUnidades').innerText = `${resultado.doseUnidades} UI`;
+                document.getElementById('resUnidades').innerText = `${doseUnidades} UI`;
 
-                // Cálculo das Sugestões
-                const totalDoses = dados.dosagemTotalMg / dados.doseDesejadaMg;
+                // Cálculo das Sugestões (Rendimento e Duração)
+                const totalDoses = escolhas.vial / escolhas.dose;
                 const dosesFormatado = Number.isInteger(totalDoses) ? totalDoses : totalDoses.toFixed(1);
                 
                 const meses = totalDoses / 4;
@@ -470,11 +489,10 @@
                 document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // 2. LÓGICA DE ERRO NA SERINGA: Verifica se a dose calculada cabe na seringa
-                if (doseFloat > dados.tamanhoSeringaMl) {
-                    // Limpa a seringa e desenha a caixa vermelha de erro
+                // Lógica Visual da Seringa e Erro de Limite
+                if (doseMl > escolhas.seringa) {
                     document.getElementById('liquido').setAttribute('width', '0');
-                    blocoPrincipal.classList.add('erro-limite'); // Deixa o card com borda vermelha também
+                    blocoPrincipal.classList.add('erro-limite'); 
 
                     grupoMarcas.innerHTML = `
                         <rect x="60" y="40" width="400" height="50" fill="rgba(220, 53, 69, 0.2)" rx="5" ry="5" />
@@ -482,18 +500,17 @@
                         <text x="260" y="85" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="middle">Escolha uma seringa maior</text>
                     `;
                 } else {
-                    // Comportamento normal: preenche e atualiza a escala
                     blocoPrincipal.classList.remove('erro-limite');
-                    atualizarMarcasSeringa(doseFloat);
+                    atualizarMarcasSeringa(doseMl);
 
-                    let porcentagem = (doseFloat / dados.tamanhoSeringaMl) * 100;
+                    let porcentagem = (doseMl / escolhas.seringa) * 100;
                     const larguraPreenchimento = (porcentagem / 100) * 400;
                     document.getElementById('liquido').setAttribute('width', larguraPreenchimento);
                 }
 
             } catch (error) {
                 console.error(error);
-                alert("Erro ao calcular. O servidor Node.js (tela preta) está rodando?");
+                alert("Ocorreu um erro matemático inesperado.");
             }
         }
     </script>
