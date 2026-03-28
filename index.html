@@ -37,7 +37,7 @@
             width: 100%;
             max-width: 800px;
             display: flex;
-            flex-direction: column; /* FORÇA 1 COLUNA (EMPILHADO) NO PC E CELULAR */
+            flex-direction: column; /* 1 COLUNA EMPILHADA */
             gap: 40px;
         }
 
@@ -63,24 +63,32 @@
 
         .grupo-container { margin-bottom: 25px; }
         
+        /* SISTEMA DE GRADE: 4 BOTÕES POR LINHA */
         .botoes-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px; 
+        }
+        
+        /* A seringa precisa de mais espaço pro texto, então 2 por linha */
+        .grid-seringa {
+            grid-template-columns: repeat(2, 1fr);
         }
         
         .btn-opcao {
             background-color: transparent;
             border: 1px solid var(--cor-borda);
             color: var(--cor-texto-secundario);
-            padding: 10px 15px;
+            padding: 12px 5px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             font-size: 0.9em;
-            flex-grow: 1; 
             text-align: center;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .btn-opcao:hover { border-color: var(--cor-azul-vip); color: var(--cor-texto-principal); }
         .btn-opcao.ativo {
@@ -90,21 +98,22 @@
         }
         
         input[type="number"] {
-            padding: 10px;
             background-color: var(--cor-fundo-site);
             border: 1px solid var(--cor-borda);
             color: var(--cor-texto-principal);
             border-radius: 6px;
             box-sizing: border-box;
-            font-size: 1em;
             transition: border 0.3s;
             text-align: center;
         }
         input[type="number"]:focus { outline: none; border-color: var(--cor-azul-vip); }
 
+        /* O campo 'Outro' ocupa a largura total da grade na última linha */
         .input-customizado {
-            flex-grow: 1;
-            min-width: 80px;
+            grid-column: 1 / -1; 
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
         }
 
         .btn-container { margin-top: 10px; }
@@ -180,19 +189,9 @@
             .calculadora-container { padding: 15px; gap: 30px; }
             .logo-texto { font-size: 2.2em; }
             
-            .botoes-grid {
-                flex-direction: column;
-                gap: 10px;
-            }
             .btn-opcao {
-                width: 100%;
-                padding: 15px;
-                font-size: 1em;
-            }
-            .input-customizado {
-                width: 100% !important;
-                padding: 15px !important;
-                font-size: 1em !important;
+                padding: 14px 2px; /* Aumenta a altura para o toque, reduz lateral para caberem 4 */
+                font-size: 0.85em; /* Ajuste sutil na fonte */
             }
             .seringa-container { padding: 15px 5px; }
             .resultados-principal strong { font-size: 1.8em; }
@@ -216,6 +215,9 @@
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 30, this)">30</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 40, this)">40</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 60, this)">60</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 100, this)">100</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 120, this)">120</button>
+                    
                     <input type="number" id="vialCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('vial', this.value)" step="0.1">
                 </div>
             </div>
@@ -231,16 +233,18 @@
                     <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 3, this)">3</button>
                     <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 5, this)">5</button>
                     <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 10, this)">10</button>
+                    
                     <input type="number" id="diluenteCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('diluente', this.value)" step="0.1">
                 </div>
             </div>
 
             <div class="grupo-container">
                 <label class="form-label">Tamanho da Seringa (ml)</label>
-                <div class="botoes-grid">
+                <div class="botoes-grid grid-seringa">
                     <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.3, this)">0.3 (30 UI)</button>
                     <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.5, this)">0.5 (50 UI)</button>
                     <button type="button" class="btn-opcao btn-seringa ativo" onclick="selecionarBotao('seringa', 1, this)">1.0 (100 UI)</button>
+                    
                     <input type="number" id="seringaCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('seringa', this.value)" step="0.1">
                 </div>
             </div>
@@ -266,6 +270,7 @@
                     <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 20, this)">20</button>
                     <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 25, this)">25</button>
                     <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 30, this)">30</button>
+                    
                     <input type="number" id="doseCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('dose', this.value)" step="0.1">
                 </div>
             </div>
