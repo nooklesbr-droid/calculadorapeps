@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Calculadora PEPS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora PEPS</title>
     <style>
         /* Cores baseadas no design do Catálogo VIP */
         :root {
@@ -21,71 +22,11 @@
             color: var(--cor-texto-principal); 
             font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; 
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-        }
-
-        /* --- TELA DE LOGIN --- */
-        #login-screen {
-            background-color: var(--cor-fundo-card);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            margin-top: 10vh; /* Desce um pouco na tela */
-        }
-        
-        .auth-icon {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-
-        #login-screen h2 { margin-top: 0; margin-bottom: 25px;}
-
-        #senha-input {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--cor-fundo-site);
-            border: 1px solid var(--cor-borda);
-            color: white;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1.1em;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        #btn-entrar {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--cor-azul-vip);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #btn-entrar:hover { background-color: var(--cor-azul-hover); }
-
-        #msg-erro-login {
-            color: var(--cor-erro);
-            margin-top: 15px;
-            display: none;
-            font-weight: bold;
-        }
-
-        /* --- CALCULADORA (Oculta por padrão) --- */
-        #calculadora-app {
-            display: none; /* Só aparece após o login */
-            width: 100%;
-            max-width: 800px; /* Largura controlada */
         }
 
         .calculadora-container {
@@ -93,8 +34,10 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 800px;
             display: flex;
-            flex-direction: column; /* FORÇA 1 COLUNA (EMPILHADO) */
+            flex-direction: column; /* FORÇA 1 COLUNA (EMPILHADO) NO PC E CELULAR */
             gap: 40px;
         }
 
@@ -120,7 +63,6 @@
 
         .grupo-container { margin-bottom: 25px; }
         
-        /* Flexbox para os botões ocuparem bem o espaço */
         .botoes-grid { 
             display: flex; 
             flex-wrap: wrap; 
@@ -136,7 +78,7 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 0.9em;
-            flex-grow: 1; /* Faz os botões esticarem para preencher a linha */
+            flex-grow: 1; 
             text-align: center;
             transition: all 0.2s;
         }
@@ -232,160 +174,144 @@
         .resultados-secundario p { margin: 8px 0; color: var(--cor-texto-secundario); font-size: 0.9em; }
         .resultados-secundario strong { color: var(--cor-texto-principal); font-size: 1.1em; }
 
-        /* Ajustes menores para celular extra pequeno */
-        @media (max-width: 480px) {
-            .calculadora-container { padding: 20px 15px; }
-            .btn-opcao { flex-basis: 30%; /* Força uns 3 por linha no cel */ }
+        /* ADAPTAÇÃO PARA CELULAR */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .calculadora-container { padding: 15px; gap: 30px; }
+            .logo-texto { font-size: 2.2em; }
+            
+            .botoes-grid {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-opcao {
+                width: 100%;
+                padding: 15px;
+                font-size: 1em;
+            }
+            .input-customizado {
+                width: 100% !important;
+                padding: 15px !important;
+                font-size: 1em !important;
+            }
+            .seringa-container { padding: 15px 5px; }
+            .resultados-principal strong { font-size: 1.8em; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="auth-icon">🔑</div>
-        <h2>Autenticação</h2>
-        <input type="password" id="senha-input" placeholder="Digite a senha" onkeypress="verificarEnter(event)">
-        <button id="btn-entrar" onclick="fazerLogin()">LIBERAR SISTEMA</button>
-        <div id="msg-erro-login">Senha Incorreta.</div>
-    </div>
+    <div class="calculadora-container">
+        
+        <div class="form-section">
+            <h1 class="logo-texto">Calculadora <span class="logo-vip">PEPS</span></h1>
 
-    <div id="calculadora-app">
-        <div class="calculadora-container">
-            
-            <div class="form-section">
-                <h1 class="logo-texto">Calculadora <span class="logo-vip">PEPS</span></h1>
-
-                <div class="grupo-container">
-                    <label class="form-label">Conteúdo por vial (mg)</label>
-                    <div class="botoes-grid">
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 5, this)">5</button>
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 10, this)">10</button>
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 15, this)">15</button>
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 20, this)">20</button>
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 30, this)">30</button>
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 40, this)">40</button>
-                        <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 60, this)">60</button>
-                        <input type="number" id="vialCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('vial', this.value)" step="0.1">
-                    </div>
-                </div>
-
-                <div class="grupo-container">
-                    <label class="form-label">Quantidade de Diluente (ml)</label>
-                    <div class="botoes-grid">
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 0.5, this)">0,5</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 1, this)">1</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 1.5, this)">1,5</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 2, this)">2</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 2.5, this)">2,5</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 3, this)">3</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 5, this)">5</button>
-                        <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 10, this)">10</button>
-                        <input type="number" id="diluenteCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('diluente', this.value)" step="0.1">
-                    </div>
-                </div>
-
-                <div class="grupo-container">
-                    <label class="form-label">Tamanho da Seringa (ml)</label>
-                    <div class="botoes-grid">
-                        <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.3, this)">0.3 (30 UI)</button>
-                        <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.5, this)">0.5 (50 UI)</button>
-                        <button type="button" class="btn-opcao btn-seringa ativo" onclick="selecionarBotao('seringa', 1, this)">1.0 (100 UI)</button>
-                        <input type="number" id="seringaCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('seringa', this.value)" step="0.1">
-                    </div>
-                </div>
-
-                <div class="grupo-container">
-                    <label class="form-label">Dose Desejada (mg)</label>
-                    <div class="botoes-grid">
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 0.25, this)">0,25</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 0.5, this)">0,5</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 1, this)">1</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 1.7, this)">1,7</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2, this)">2</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2.4, this)">2,4</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2.5, this)">2,5</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 4, this)">4</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 5, this)">5</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 7.5, this)">7,5</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 10, this)">10</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 12, this)">12</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 12.5, this)">12,5</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 15, this)">15</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 17.5, this)">17,5</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 20, this)">20</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 25, this)">25</button>
-                        <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 30, this)">30</button>
-                        <input type="number" id="doseCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('dose', this.value)" step="0.1">
-                    </div>
-                </div>
-
-                <div class="btn-container">
-                    <button class="btn-calcular" onclick="realizarCalculo()">Calcular</button>
+            <div class="grupo-container">
+                <label class="form-label">Conteúdo por vial (mg)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 5, this)">5</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 10, this)">10</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 15, this)">15</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 20, this)">20</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 30, this)">30</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 40, this)">40</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 60, this)">60</button>
+                    <input type="number" id="vialCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('vial', this.value)" step="0.1">
                 </div>
             </div>
 
-            <div class="grafico-section" id="areaGrafica">
-                <h3>Visualização da Aplicação</h3>
-                <div class="seringa-container">
-                    <svg class="seringa-svg" viewBox="0 0 520 130" preserveAspectRatio="xMidYMid meet">
-                        <rect x="60" y="40" width="400" height="50" fill="#11161d" rx="5" ry="5" />
-                        <rect id="liquido" x="60" y="40" width="0" height="50" rx="5" ry="5" />
-                        <g fill="none" stroke="#34495e" stroke-width="2">
-                            <rect x="60" y="40" width="400" height="50" rx="5" ry="5" />
-                            <path d="M 460 60 L 500 63 L 460 66 Z" fill="#34495e"/>
-                        </g>
-                        <g id="marcas-seringa"></g>
-                    </svg>
-                </div>
-
-                <div class="resultados-wrapper" id="areaResultadosWrapper">
-                    <div class="resultados-principal" id="blocoPrincipal">
-                        <p>Puxar na Seringa:</p>
-                        <strong id="resVolume">-- ml</strong>
-                        
-                        <p style="margin-top: 15px;">Equivalente na Seringa de Insulina:</p>
-                        <strong id="resUnidades" style="margin-bottom: 0;">-- UI</strong>
-                    </div>
-
-                    <div class="resultados-secundario">
-                        <p>Rendimento Estimado do Frasco:</p>
-                        <strong id="resRendimento">-- doses</strong>
-                        
-                        <p style="margin-top: 12px;">Duração (1 aplicação/semana):</p>
-                        <strong id="resDuracao">--</strong>
-                    </div>
+            <div class="grupo-container">
+                <label class="form-label">Quantidade de Diluente (ml)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 0.5, this)">0,5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 1, this)">1</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 1.5, this)">1,5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 2, this)">2</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 2.5, this)">2,5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 3, this)">3</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 5, this)">5</button>
+                    <button type="button" class="btn-opcao btn-diluente" onclick="selecionarBotao('diluente', 10, this)">10</button>
+                    <input type="number" id="diluenteCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('diluente', this.value)" step="0.1">
                 </div>
             </div>
-            
+
+            <div class="grupo-container">
+                <label class="form-label">Tamanho da Seringa (ml)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.3, this)">0.3 (30 UI)</button>
+                    <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.5, this)">0.5 (50 UI)</button>
+                    <button type="button" class="btn-opcao btn-seringa ativo" onclick="selecionarBotao('seringa', 1, this)">1.0 (100 UI)</button>
+                    <input type="number" id="seringaCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('seringa', this.value)" step="0.1">
+                </div>
+            </div>
+
+            <div class="grupo-container">
+                <label class="form-label">Dose Desejada (mg)</label>
+                <div class="botoes-grid">
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 0.25, this)">0,25</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 0.5, this)">0,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 1, this)">1</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 1.7, this)">1,7</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2, this)">2</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2.4, this)">2,4</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 2.5, this)">2,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 4, this)">4</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 5, this)">5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 7.5, this)">7,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 10, this)">10</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 12, this)">12</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 12.5, this)">12,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 15, this)">15</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 17.5, this)">17,5</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 20, this)">20</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 25, this)">25</button>
+                    <button type="button" class="btn-opcao btn-dose" onclick="selecionarBotao('dose', 30, this)">30</button>
+                    <input type="number" id="doseCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('dose', this.value)" step="0.1">
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn-calcular" onclick="realizarCalculo()">Calcular</button>
+            </div>
         </div>
+
+        <div class="grafico-section" id="areaGrafica">
+            <h3>Visualização da Aplicação</h3>
+            <div class="seringa-container">
+                <svg class="seringa-svg" viewBox="0 0 520 130" preserveAspectRatio="xMidYMid meet">
+                    <rect x="60" y="40" width="400" height="50" fill="#11161d" rx="5" ry="5" />
+                    <rect id="liquido" x="60" y="40" width="0" height="50" rx="5" ry="5" />
+                    <g fill="none" stroke="#34495e" stroke-width="2">
+                        <rect x="60" y="40" width="400" height="50" rx="5" ry="5" />
+                        <path d="M 460 60 L 500 63 L 460 66 Z" fill="#34495e"/>
+                    </g>
+                    <g id="marcas-seringa"></g>
+                </svg>
+            </div>
+
+            <div class="resultados-wrapper" id="areaResultadosWrapper">
+                
+                <div class="resultados-principal" id="blocoPrincipal">
+                    <p>Puxar na Seringa:</p>
+                    <strong id="resVolume">-- ml</strong>
+                    
+                    <p style="margin-top: 15px;">Equivalente na Seringa de Insulina:</p>
+                    <strong id="resUnidades" style="margin-bottom: 0;">-- UI</strong>
+                </div>
+
+                <div class="resultados-secundario">
+                    <p>Rendimento Estimado do Frasco:</p>
+                    <strong id="resRendimento">-- doses</strong>
+                    
+                    <p style="margin-top: 12px;">Duração (1 aplicação/semana):</p>
+                    <strong id="resDuracao">--</strong>
+                </div>
+            </div>
+        </div>
+        
     </div>
 
     <script>
-        // --- LÓGICA DE LOGIN ---
-        function fazerLogin() {
-            const senha = document.getElementById('senha-input').value;
-            const msgErro = document.getElementById('msg-erro-login');
-            
-            // Senha solicitada: 2801
-            if (senha === "2801") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('calculadora-app').style.display = 'block';
-                // Desenha a seringa vazia inicial após liberar a tela
-                atualizarMarcasSeringa(null); 
-            } else {
-                msgErro.style.display = 'block';
-                setTimeout(() => msgErro.style.display = 'none', 3000);
-            }
-        }
-
-        // Permite logar apertando Enter
-        function verificarEnter(event) {
-            if (event.key === "Enter") {
-                fazerLogin();
-            }
-        }
-
-        // --- LÓGICA DA CALCULADORA ---
         const escolhas = { vial: null, diluente: null, dose: null, seringa: 1 };
 
         function selecionarBotao(categoria, valor, elementoBotao) {
@@ -401,7 +327,7 @@
         }
 
         function selecionarCustomizado(categoria, valor) {
-            if(!valor) return; // ignora se estiver vazio
+            if(!valor) return; 
             escolhas[categoria] = parseFloat(valor.replace(',', '.')); 
             const botoes = document.querySelectorAll(`.btn-${categoria}`);
             botoes.forEach(btn => btn.classList.remove('ativo'));
@@ -415,10 +341,9 @@
             document.getElementById('liquido').setAttribute('width', '0');
             document.getElementById('areaResultadosWrapper').style.display = 'none';
             document.getElementById('blocoPrincipal').classList.remove('erro-limite');
-            atualizarMarcasSeringa(null);
+            atualizarMarcasSeringa();
         }
 
-        // --- NOVA LÓGICA GRÁFICA: Mostra todas as marcas ---
         function atualizarMarcasSeringa() {
             const tamanho = escolhas.seringa || 1;
             const grupoMarcas = document.getElementById('marcas-seringa');
@@ -438,13 +363,11 @@
                 let unidades = Math.round(valorMl * 100);
                 let pos_x = 60 + (valorMl / tamanho) * larguraTotal;
 
-                // Desenha as marcações para TODOS os números
                 let linhaTop = `<line x1="${pos_x}" y1="40" x2="${pos_x}" y2="50" stroke="#a0aab5" stroke-width="1.5" />`;
                 let linhaBottom = `<line x1="${pos_x}" y1="80" x2="${pos_x}" y2="90" stroke="#a0aab5" stroke-width="1.5" />`;
                 
                 let displayMl = valorMl.toString().replace('0.', '.');
                 
-                // Textos menores para caberem todos
                 let textHtml = `
                     <text x="${pos_x}" y="32" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="middle">${displayMl}</text>
                     <text x="${pos_x}" y="112" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="middle">${unidades}</text>
@@ -453,10 +376,11 @@
                 grupoMarcas.innerHTML += linhaTop + linhaBottom + textHtml;
             }
 
-            // Labels Laterais
             grupoMarcas.innerHTML += `<text x="50" y="32" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="end">ml:</text>`;
             grupoMarcas.innerHTML += `<text x="50" y="112" fill="#a0aab5" font-size="14" font-weight="bold" text-anchor="end">UI:</text>`;
         }
+
+        window.onload = () => atualizarMarcasSeringa();
 
         function realizarCalculo() {
             if (!escolhas.vial || !escolhas.diluente || !escolhas.dose || !escolhas.seringa) {
@@ -496,8 +420,10 @@
                 document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // Rola a tela no celular para o usuário ver o resultado
-                document.getElementById('areaGrafica').scrollIntoView({ behavior: 'smooth' });
+                // Desliza a tela no celular
+                if (window.innerWidth <= 768) {
+                    document.getElementById('areaGrafica').scrollIntoView({ behavior: 'smooth' });
+                }
 
                 if (doseMl > escolhas.seringa) {
                     document.getElementById('liquido').setAttribute('width', '0');
@@ -509,7 +435,7 @@
                     `;
                 } else {
                     blocoPrincipal.classList.remove('erro-limite');
-                    atualizarMarcasSeringa(); // Redesenha a seringa com os traços normais
+                    atualizarMarcasSeringa(); 
 
                     let porcentagem = (doseMl / escolhas.seringa) * 100;
                     const larguraPreenchimento = (porcentagem / 100) * 400;
