@@ -32,7 +32,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             width: 100%;
             max-width: 900px;
-            display: flex; /* Coloca as colunas lado a lado no PC */
+            display: flex; /* No PC, fica lado a lado */
             gap: 40px;
         }
 
@@ -193,41 +193,45 @@
             border: 1px solid var(--cor-borda);
             text-align: center;
         }
-        .resultados-secundario p { 
-            margin: 8px 0; 
-            color: var(--cor-texto-secundario); 
-            font-size: 0.9em; 
-        }
-        .resultados-secundario strong { 
-            color: var(--cor-texto-principal); 
-            font-size: 1.1em; 
-        }
+        .resultados-secundario p { margin: 8px 0; color: var(--cor-texto-secundario); font-size: 0.9em; }
+        .resultados-secundario strong { color: var(--cor-texto-principal); font-size: 1.1em; }
 
         /* =========================================================
-           ADAPTAÇÃO PARA CELULAR (RESPONSIVIDADE)
+           ADAPTAÇÃO PARA CELULAR (RESPONSIVIDADE MELHORADA)
            ========================================================= */
         @media (max-width: 768px) {
-            body {
-                padding: 15px 10px; 
+            body { padding: 10px; }
+            .calculadora-container { 
+                flex-direction: column; /* Coloca os resultados abaixo do formulário */
+                padding: 15px; 
+                gap: 30px; 
             }
-            .calculadora-container {
-                flex-direction: column; 
-                padding: 20px; 
-                gap: 20px;
+            .logo-texto { text-align: center; font-size: 2.2em; }
+            
+            /* Transforma os botões em lista (um por linha) e largura 100% */
+            .botoes-grid {
+                flex-direction: column;
+                gap: 10px;
             }
-            .logo-texto {
-                text-align: center; 
-                font-size: 2.2em;
+            .btn-opcao {
+                width: 100%;
+                padding: 15px; /* Deixa o botão mais alto para toque do dedo */
+                font-size: 1em;
             }
-            .btn-calcular {
-                width: 100%; 
+            
+            /* Ajuste do campo "Outro" no celular */
+            .input-customizado {
+                width: 100% !important;
+                padding: 15px !important;
+                font-size: 1em !important;
+                text-align: center; /* Centraliza o texto digitado */
             }
-            .seringa-container {
-                padding: 15px 5px; 
-            }
-            .resultados-principal strong {
-                font-size: 1.8em; 
-            }
+
+            .btn-container { margin-top: 10px; }
+            .btn-calcular { width: 100%; } /* Botão calcular tela cheia */
+            
+            .seringa-container { padding: 15px 5px; }
+            .resultados-principal strong { font-size: 1.8em; }
         }
     </style>
 </head>
@@ -443,9 +447,8 @@
 
         window.onload = () => atualizarMarcasSeringa(null);
 
-        // --- NOVA FUNÇÃO DE CÁLCULO LOCAL (Sem servidor Node.js) ---
+        // A Matemática pura acontecendo direto no navegador
         function realizarCalculo() {
-            // Validações
             if (!escolhas.vial || !escolhas.diluente || !escolhas.dose || !escolhas.seringa) {
                 alert("Por favor, selecione as opções de Vial, Diluente, Seringa e Dose.");
                 return;
@@ -456,19 +459,15 @@
                 return;
             }
 
-            // A Matemática pura acontecendo direto no navegador
             try {
                 const concentracao = escolhas.vial / escolhas.diluente; 
                 let doseMl = escolhas.dose / concentracao; 
                 
-                // Arredonda para 3 casas decimais (ex: 0.16666 vira 0.167)
                 doseMl = parseFloat(doseMl.toFixed(3)); 
                 const doseUnidades = Math.round(doseMl * 100);
 
-                // Formatação para mostrar na tela (padrão Brasil com vírgula)
                 const volumeFormatado = doseMl.toString().replace('.', ',');
 
-                // Atualizando o HTML com os resultados
                 document.getElementById('areaResultadosWrapper').style.display = 'flex';
                 const blocoPrincipal = document.getElementById('blocoPrincipal');
                 const grupoMarcas = document.getElementById('marcas-seringa');
@@ -476,7 +475,6 @@
                 document.getElementById('resVolume').innerText = `${volumeFormatado} ml`;
                 document.getElementById('resUnidades').innerText = `${doseUnidades} UI`;
 
-                // Cálculo das Sugestões (Rendimento e Duração)
                 const totalDoses = escolhas.vial / escolhas.dose;
                 const dosesFormatado = Number.isInteger(totalDoses) ? totalDoses : totalDoses.toFixed(1);
                 
@@ -489,7 +487,13 @@
                 document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // Lógica Visual da Seringa e Erro de Limite
+                // Desliza a tela suavemente para baixo no celular para mostrar o resultado
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        document.querySelector('.grafico-section').scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+
                 if (doseMl > escolhas.seringa) {
                     document.getElementById('liquido').setAttribute('width', '0');
                     blocoPrincipal.classList.add('erro-limite'); 
