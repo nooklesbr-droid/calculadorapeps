@@ -70,7 +70,7 @@
         .botoes-container { 
             display: flex;
             flex-wrap: wrap;
-            gap: 6px; /* Reduzido para garantir espaço na linha */
+            gap: 6px; 
             align-items: center;
             justify-content: flex-start;
         }
@@ -79,7 +79,7 @@
             background-color: transparent;
             border: 1px solid var(--cor-borda);
             color: var(--cor-texto-secundario);
-            width: 44px; /* Tamanho exato para encaixar 12 botões + input */
+            width: 44px; 
             height: 44px;
             padding: 0;
             border-radius: 6px;
@@ -108,6 +108,11 @@
             white-space: nowrap; 
         }
         
+        /* Ajuste fino para os botões de vial que passam de 3 dígitos */
+        .btn-vial[onclick*="100"], .btn-vial[onclick*="120"], .btn-vial[onclick*="150"], .btn-vial[onclick*="200"] {
+            width: 52px;
+        }
+        
         input[type="number"] {
             background-color: var(--cor-fundo-site);
             border: 1px solid var(--cor-borda);
@@ -121,9 +126,9 @@
         input[type="number"]:focus { outline: none; border-color: var(--cor-azul-vip); }
 
         .input-customizado {
-            flex-grow: 1; /* Estica automaticamente para preencher o resto da linha */
+            flex-grow: 1;
             min-width: 65px;
-            max-width: 100px; /* Impede que fique gigante */
+            max-width: 100px; 
             height: 44px;
             padding: 5px;
         }
@@ -168,7 +173,7 @@
         .seringa-container {
             position: relative;
             width: 100%;
-            height: 200px; /* Aumentado para dar mais destaque */
+            height: 200px; 
             margin-top: 10px;
             background-color: var(--cor-fundo-site);
             border-radius: 8px;
@@ -319,8 +324,15 @@
             
             .botoes-container { gap: 6px; }
             .btn-opcao { width: 42px; height: 42px; font-size: 0.85em; }
-            .btn-seringa, .btn-dose { padding: 0 10px; }
+            
+            /* CORREÇÃO AQUI: Largura automática para os textos caberem no celular */
+            .btn-seringa, .btn-dose { width: auto; padding: 0 10px; }
+            
             .input-customizado { max-width: 100%; height: 42px; }
+
+            .btn-vial[onclick*="100"], .btn-vial[onclick*="120"], .btn-vial[onclick*="150"], .btn-vial[onclick*="200"] {
+                width: 48px;
+            }
 
             .seringa-container { padding: 15px 5px; height: 180px; }
             .resultados-principal strong { font-size: 1.8em; }
@@ -422,26 +434,35 @@
             <h3>Visualização da Aplicação</h3>
             <div class="seringa-container">
                 <svg class="seringa-svg" viewBox="0 0 990 180" preserveAspectRatio="xMidYMid meet">
+                    <!-- Fundo do Tubo -->
                     <rect x="345" y="50" width="400" height="80" fill="#11161d" rx="6" ry="6" />
                     
+                    <!-- Líquido -->
                     <rect id="liquido" x="745" y="50" width="0" height="80" rx="6" ry="6" />
                     
+                    <!-- Agulha e Bico (Apontando p/ direita) -->
                     <g fill="none" stroke="#34495e" stroke-width="2">
                         <path d="M 745 75 L 765 80 L 765 100 L 745 105 Z" fill="#34495e"/>
                         <line x1="765" y1="90" x2="820" y2="90" stroke="#7f8c8d" stroke-width="4"/>
                     </g>
 
+                    <!-- Êmbolo Dividido (Apoio Fixo, Borracha Móvel, Haste Flexível) -->
+                    <!-- 1. Apoio do polegar (Fixo na esquerda) -->
                     <rect x="280" y="35" width="15" height="110" fill="#2c3e50" rx="4" />
                     
+                    <!-- 2. Haste do êmbolo (Estica/Encolhe via JS) -->
                     <rect id="haste" x="295" y="80" width="435" height="20" fill="#a0aab5" />
                     
+                    <!-- 3. Borracha do êmbolo (Móvel acompanhando o líquido) -->
                     <g id="borracha" style="transform: translateX(0px);">
                         <path d="M 730 51 L 730 129 Q 745 129 745 125 L 745 55 Q 745 51 730 51 Z" fill="#2c3e50" />
                         <rect x="725" y="51" width="5" height="78" fill="#1a222c" />
                     </g>
 
+                    <!-- Contorno Externo do Tubo -->
                     <rect x="345" y="50" width="400" height="80" fill="none" stroke="#34495e" stroke-width="3" rx="6" ry="6" />
 
+                    <!-- Marcas de Medição geradas por JS -->
                     <g id="marcas-seringa"></g>
                 </svg>
             </div>
@@ -635,7 +656,7 @@
                     atualizarMarcasSeringa(); 
 
                     let porcentagem = (doseMl / escolhas.seringa) * 100;
-                    const larguraPreenchimento = (porcentagem / 100) * 400; // 400 é a largura do tubo atualizado
+                    const larguraPreenchimento = (porcentagem / 100) * 400;
                     
                     // 1. Líquido enche da direita para a esquerda
                     document.getElementById('liquido').setAttribute('width', larguraPreenchimento);
