@@ -27,7 +27,6 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            gap: 30px; 
             min-height: 100vh;
         }
 
@@ -35,12 +34,12 @@
             background-color: var(--cor-fundo-card);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             width: 100%;
             max-width: 800px;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 30px;
             box-sizing: border-box;
         }
 
@@ -48,7 +47,7 @@
             font-size: 2.5em;
             font-weight: 900;
             margin-top: 0;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             letter-spacing: -1px;
             text-align: center;
         }
@@ -66,7 +65,7 @@
 
         .grupo-container { margin-bottom: 25px; }
         
-        /* SISTEMA DE GRADE: 5 BOTÕES POR LINHA PARA FICAREM MAIS QUADRADOS */
+        /* SISTEMA DE GRADE: 5 BOTÕES POR LINHA */
         .botoes-grid { 
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -78,7 +77,7 @@
             border: 1px solid var(--cor-borda);
             color: var(--cor-texto-secundario);
             padding: 0;
-            height: 46px; /* Altura fixa para manter a proporção */
+            height: 46px; 
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
@@ -106,7 +105,7 @@
         }
         input[type="number"]:focus { outline: none; border-color: var(--cor-azul-vip); }
 
-        /* O campo 'Outro' agora ocupa apenas 2 espaços, encaixando na grade */
+        /* O campo 'Outro' ocupa 2 espaços */
         .input-customizado {
             grid-column: span 2; 
             height: 46px;
@@ -115,7 +114,7 @@
             font-size: 0.95em;
         }
 
-        .btn-container { margin-top: 10px; }
+        .btn-container { margin-top: 10px; margin-bottom: 10px; }
         .btn-calcular {
             width: 100%;
             padding: 18px;
@@ -130,6 +129,119 @@
             transition: background-color 0.3s;
         }
         .btn-calcular:hover { background-color: var(--cor-azul-hover); }
+
+        /* -------------------------------------------
+           NOVA SEÇÃO DE ANÚNCIOS (CARROSSEL INTEGRADO)
+           ------------------------------------------- */
+        .ads-destaque {
+            background: linear-gradient(180deg, #161e27 0%, #11161d 100%);
+            border: 1px solid var(--cor-azul-vip);
+            border-radius: 10px;
+            padding: 20px 15px 15px 15px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 174, 239, 0.1);
+        }
+
+        .ads-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #fff159;
+            color: #333;
+            font-size: 0.7em;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-bottom-right-radius: 8px;
+            border-top-left-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .ads-destaque h3 {
+            color: #ffffff;
+            font-size: 1.05em;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ads-destaque h3 span { color: #fff159; font-weight: 800;}
+
+        .ads-carousel {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Barra de rolagem customizada pro carrossel */
+        .ads-carousel::-webkit-scrollbar { height: 6px; }
+        .ads-carousel::-webkit-scrollbar-track { background: var(--cor-fundo-site); border-radius: 10px; }
+        .ads-carousel::-webkit-scrollbar-thumb { background: var(--cor-borda); border-radius: 10px; }
+        .ads-carousel:hover::-webkit-scrollbar-thumb { background: var(--cor-azul-vip); }
+
+        .ad-card {
+            flex: 0 0 135px; /* Tamanho fixo perfeito para deslizar */
+            background: #1a222c;
+            border: 1px solid #2c3e50;
+            border-radius: 8px;
+            padding: 8px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .ad-card:hover {
+            border-color: #fff159;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 241, 89, 0.15);
+        }
+
+        .ad-img-wrapper {
+            width: 100%;
+            height: 110px;
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .ad-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .ad-title {
+            color: #ffffff;
+            font-size: 0.75em;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.3;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.6em; 
+        }
+
+        .ad-cta {
+            background: #fff159;
+            color: #333;
+            font-size: 0.75em;
+            font-weight: 900;
+            width: 100%;
+            text-align: center;
+            padding: 7px 0;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-top: auto;
+        }
+        /* ------------------------------------------- */
 
         .grafico-section h3 { margin-top: 0; color: var(--cor-texto-secundario); font-weight: 500;}
         .seringa-container {
@@ -180,94 +292,13 @@
         .resultados-secundario p { margin: 8px 0; color: var(--cor-texto-secundario); font-size: 0.9em; }
         .resultados-secundario strong { color: var(--cor-texto-principal); font-size: 1.1em; }
 
-        .ads-section {
-            width: 100%;
-            max-width: 800px;
-            background-color: var(--cor-fundo-card);
-            padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-        }
-
-        .ads-section h3 {
-            margin-top: 0;
-            color: var(--cor-texto-secundario);
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .ads-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        .ad-card {
-            background-color: var(--cor-fundo-site);
-            border: 1px solid var(--cor-borda);
-            border-radius: 8px;
-            padding: 12px;
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .ad-card:hover {
-            border-color: var(--cor-azul-vip);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 174, 239, 0.15);
-        }
-
-        .ad-image {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            background-color: #2c3e50;
-        }
-
-        .ad-title {
-            color: var(--cor-texto-principal);
-            font-size: 0.85em;
-            text-align: center;
-            font-weight: 500;
-            margin-bottom: 8px;
-            line-height: 1.3;
-            min-height: 2.6em;
-            display: flex;
-            align-items: center;
-        }
-
-        .ad-cta {
-            color: var(--cor-azul-vip);
-            font-size: 0.75em;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding-top: 5px;
-            border-top: 1px solid var(--cor-borda);
-            width: 100%;
-            text-align: center;
-            transition: color 0.3s;
-        }
-        
-        .ad-card:hover .ad-cta {
-            color: var(--cor-azul-hover);
-        }
-
         @media (max-width: 768px) {
             body { padding: 15px 10px; }
-            .calculadora-container, .ads-section { padding: 20px 15px; gap: 30px; }
+            .calculadora-container { padding: 20px 15px; gap: 25px; }
             .logo-texto { font-size: 2.2em; }
             
             .botoes-grid {
-                grid-template-columns: repeat(4, 1fr); /* 4 colunas no mobile para manter proporção */
+                grid-template-columns: repeat(4, 1fr); 
                 gap: 8px;
             }
             .btn-opcao, .input-customizado {
@@ -277,11 +308,6 @@
 
             .seringa-container { padding: 15px 5px; }
             .resultados-principal strong { font-size: 1.8em; }
-
-            .ads-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
         }
     </style>
 </head>
@@ -328,7 +354,6 @@
 
             <div class="grupo-container">
                 <label class="form-label">Tamanho da Seringa (ml)</label>
-                <!-- Removido o grid-seringa específico, usa a mesma proporção dos outros -->
                 <div class="botoes-grid">
                     <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.3, this)">0.3 (30 UI)</button>
                     <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.5, this)">0.5 (50 UI)</button>
@@ -370,6 +395,69 @@
             </div>
         </div>
 
+        <!-- MÓDULO DE ANÚNCIOS ALTAMENTE VISÍVEL (ENTRE O BOTÃO E O RESULTADO) -->
+        <div class="ads-destaque" id="secaoAds">
+            <span class="ads-badge">Recomendado</span>
+            <h3>🔥 Itens essenciais no <span>Mercado Livre</span></h3>
+            
+            <div class="ads-carousel">
+                <!-- Anúncio 1 -->
+                <a href="https://meli.la/2fftt3T" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <!-- Cole o link da imagem real dentro do src="" -->
+                        <img src="COLE_AQUI_O_LINK_DA_FOTO_1" alt="Produto 1">
+                    </div>
+                    <span class="ad-title">NOME DO PRODUTO 1</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+
+                <!-- Anúncio 2 (Estojo) -->
+                <a href="https://meli.la/2XpMrzF" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <img src="COLE_AQUI_O_LINK_DA_FOTO_2" alt="Estojo Organizador">
+                    </div>
+                    <span class="ad-title">Estojo Organizador</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+
+                <!-- Anúncio 3 -->
+                <a href="https://meli.la/2fudUBQ" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <img src="COLE_AQUI_O_LINK_DA_FOTO_3" alt="Produto 3">
+                    </div>
+                    <span class="ad-title">NOME DO PRODUTO 3</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+
+                <!-- Anúncio 4 -->
+                <a href="https://meli.la/1YnTMiR" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <img src="COLE_AQUI_O_LINK_DA_FOTO_4" alt="Produto 4">
+                    </div>
+                    <span class="ad-title">NOME DO PRODUTO 4</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+
+                <!-- Anúncio 5 -->
+                <a href="https://meli.la/33khU2n" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <img src="COLE_AQUI_O_LINK_DA_FOTO_5" alt="Produto 5">
+                    </div>
+                    <span class="ad-title">NOME DO PRODUTO 5</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+
+                <!-- Anúncio 6 -->
+                <a href="https://meli.la/1CFaLLk" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <img src="COLE_AQUI_O_LINK_DA_FOTO_6" alt="Produto 6">
+                    </div>
+                    <span class="ad-title">NOME DO PRODUTO 6</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+            </div>
+        </div>
+
         <div class="grafico-section" id="areaGrafica">
             <h3>Visualização da Aplicação</h3>
             <div class="seringa-container">
@@ -404,36 +492,6 @@
             </div>
         </div>
         
-    </div>
-
-    <!-- SEÇÃO DE ANÚNCIOS -->
-    <div class="ads-section">
-        <h3>Produtos Recomendados</h3>
-        <div class="ads-grid">
-            <a href="https://meli.la/21yANTE" target="_blank" class="ad-card">
-                <img src="COLE_O_LINK_DA_IMAGEM_AQUI" alt="Produto 1" class="ad-image">
-                <span class="ad-title">NOME CURTO DO PRODUTO 1</span>
-                <span class="ad-cta">Ver oferta</span>
-            </a>
-
-            <a href="https://meli.la/2p9U7SB" target="_blank" class="ad-card">
-                <img src="COLE_O_LINK_DA_IMAGEM_AQUI" alt="Produto 2" class="ad-image">
-                <span class="ad-title">NOME CURTO DO PRODUTO 2</span>
-                <span class="ad-cta">Ver oferta</span>
-            </a>
-
-            <a href="https://meli.la/2qXKDDi" target="_blank" class="ad-card">
-                <img src="COLE_O_LINK_DA_IMAGEM_AQUI" alt="Produto 3" class="ad-image">
-                <span class="ad-title">NOME CURTO DO PRODUTO 3</span>
-                <span class="ad-cta">Ver oferta</span>
-            </a>
-
-            <a href="https://meli.la/2XpMrzF" target="_blank" class="ad-card">
-                <img src="COLE_O_LINK_DA_IMAGEM_AQUI" alt="Produto 4" class="ad-image">
-                <span class="ad-title">NOME CURTO DO PRODUTO 4</span>
-                <span class="ad-cta">Ver oferta</span>
-            </a>
-        </div>
     </div>
 
     <script>
@@ -553,9 +611,9 @@
                 document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // Desliza a tela no celular somente se o botão calcular for pressionado
+                // Desliza a tela no celular para os ANÚNCIOS (o usuário vê a oferta e arrasta 1 dedo p/ ver o resultado)
                 if (window.innerWidth <= 768 && !modoAutomatico) {
-                    document.getElementById('areaGrafica').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('secaoAds').scrollIntoView({ behavior: 'smooth' });
                 }
 
                 if (doseMl > escolhas.seringa) {
