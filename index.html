@@ -66,30 +66,27 @@
 
         .grupo-container { margin-bottom: 25px; }
         
+        /* SISTEMA DE GRADE: 5 BOTÕES POR LINHA PARA FICAREM MAIS QUADRADOS */
         .botoes-grid { 
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px; 
-        }
-        
-        .grid-seringa {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px; 
         }
         
         .btn-opcao {
             background-color: transparent;
             border: 1px solid var(--cor-borda);
             color: var(--cor-texto-secundario);
-            padding: 12px 5px;
+            padding: 0;
+            height: 46px; /* Altura fixa para manter a proporção */
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9em;
-            text-align: center;
-            transition: all 0.2s;
+            font-size: 1em;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
         }
         .btn-opcao:hover { border-color: var(--cor-azul-vip); color: var(--cor-texto-principal); }
         .btn-opcao.ativo {
@@ -109,11 +106,13 @@
         }
         input[type="number"]:focus { outline: none; border-color: var(--cor-azul-vip); }
 
+        /* O campo 'Outro' agora ocupa apenas 2 espaços, encaixando na grade */
         .input-customizado {
-            grid-column: 1 / -1; 
+            grid-column: span 2; 
+            height: 46px;
             width: 100%;
-            padding: 12px;
-            font-size: 1em;
+            padding: 0 10px;
+            font-size: 0.95em;
         }
 
         .btn-container { margin-top: 10px; }
@@ -267,10 +266,15 @@
             .calculadora-container, .ads-section { padding: 20px 15px; gap: 30px; }
             .logo-texto { font-size: 2.2em; }
             
-            .btn-opcao {
-                padding: 14px 2px;
-                font-size: 0.85em;
+            .botoes-grid {
+                grid-template-columns: repeat(4, 1fr); /* 4 colunas no mobile para manter proporção */
+                gap: 8px;
             }
+            .btn-opcao, .input-customizado {
+                height: 42px;
+                font-size: 0.9em;
+            }
+
             .seringa-container { padding: 15px 5px; }
             .resultados-principal strong { font-size: 1.8em; }
 
@@ -297,6 +301,7 @@
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 20, this)">20</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 30, this)">30</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 40, this)">40</button>
+                    <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 50, this)">50</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 60, this)">60</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 100, this)">100</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 120, this)">120</button>
@@ -323,7 +328,8 @@
 
             <div class="grupo-container">
                 <label class="form-label">Tamanho da Seringa (ml)</label>
-                <div class="botoes-grid grid-seringa">
+                <!-- Removido o grid-seringa específico, usa a mesma proporção dos outros -->
+                <div class="botoes-grid">
                     <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.3, this)">0.3 (30 UI)</button>
                     <button type="button" class="btn-opcao btn-seringa" onclick="selecionarBotao('seringa', 0.5, this)">0.5 (50 UI)</button>
                     <button type="button" class="btn-opcao btn-seringa ativo" onclick="selecionarBotao('seringa', 1, this)">1.0 (100 UI)</button>
