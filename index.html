@@ -55,7 +55,7 @@
 
         .form-label { 
             display: block; 
-            margin-bottom: 10px; 
+            margin-bottom: 12px; 
             color: var(--cor-texto-secundario); 
             font-size: 0.85em;
             text-transform: uppercase;
@@ -65,59 +65,69 @@
 
         .grupo-container { margin-bottom: 25px; }
         
-        /* SISTEMA DE GRADE: BOTÕES QUADRADOS E COMPACTOS */
+        /* NOVO SISTEMA DE GRADE INTELIGENTE */
         .botoes-grid { 
             display: grid;
-            /* O auto-fill com minmax(65px) impede que o botão estique e fique retangular */
-            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
-            gap: 8px; 
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); /* Caixas menores e padronizadas */
+            gap: 10px; 
         }
 
-        /* Grade especial para as seringas para caber o texto "(100 UI)" */
+        /* Grade da seringa um pouco maior para caber o texto "(100 UI)" */
         .grid-seringa {
-            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
         }
         
-        .btn-opcao {
+        /* BOTÕES E INPUT AGORA COMPARTILHAM O MESMO TAMANHO E BASE */
+        .btn-opcao, .input-customizado {
             background-color: transparent;
+            height: 52px; /* Mais quadradinho */
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn-opcao {
             border: 1px solid var(--cor-borda);
             color: var(--cor-texto-secundario);
-            padding: 0;
-            height: 55px; /* Altura ideal para deixá-lo quadradinho */
-            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
-        .btn-opcao:hover { border-color: var(--cor-azul-vip); color: var(--cor-texto-principal); }
+        
+        .btn-opcao:hover { 
+            border-color: var(--cor-azul-vip); 
+            color: var(--cor-texto-principal); 
+        }
+        
         .btn-opcao.ativo {
             background-color: var(--cor-azul-vip);
             border-color: var(--cor-azul-vip);
             color: white;
+            box-shadow: 0 4px 10px rgba(0, 174, 239, 0.3);
         }
         
-        input[type="number"] {
-            background-color: var(--cor-fundo-site);
-            border: 1px solid var(--cor-borda);
-            color: var(--cor-texto-principal);
-            border-radius: 8px;
-            box-sizing: border-box;
-            transition: border 0.3s;
-            text-align: center;
-        }
-        input[type="number"]:focus { outline: none; border-color: var(--cor-azul-vip); }
-
-        /* O campo 'Outro' ocupa 2 quadradinhos de espaço */
+        /* O botão "Outro" agora tem o exato tamanho de um botão normal */
         .input-customizado {
-            grid-column: span 2; 
-            height: 55px;
+            border: 2px dashed #2c3e50; /* Tracejado para indicar campo digitável */
+            color: var(--cor-texto-principal);
+            text-align: center;
             width: 100%;
-            padding: 0 10px;
-            font-size: 0.95em;
+        }
+        
+        .input-customizado::placeholder {
+            color: #5d6d7e;
+            font-weight: 600;
+        }
+
+        .input-customizado:focus, .input-customizado:not(:placeholder-shown) { 
+            outline: none; 
+            border: 2px solid var(--cor-azul-vip); 
+            background-color: rgba(0, 174, 239, 0.05);
         }
 
         .btn-container { margin-top: 10px; margin-bottom: 10px; }
@@ -137,7 +147,7 @@
         .btn-calcular:hover { background-color: var(--cor-azul-hover); }
 
         /* -------------------------------------------
-           SEÇÃO DE ANÚNCIOS (CARROSSEL INTEGRADO)
+           SEÇÃO DE ANÚNCIOS (CARROSSEL)
            ------------------------------------------- */
         .ads-destaque {
             background: linear-gradient(180deg, #161e27 0%, #11161d 100%);
@@ -218,7 +228,7 @@
             margin-bottom: 10px;
             overflow: hidden;
         }
-        .ad-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .ad-img-wrapper img { width: 100%; height: 100%; object-fit: contain; }
 
         .ad-title {
             color: #ffffff;
@@ -246,6 +256,7 @@
             text-transform: uppercase;
             margin-top: auto;
         }
+
         /* ------------------------------------------- */
 
         .grafico-section h3 { margin-top: 0; color: var(--cor-texto-secundario); font-weight: 500;}
@@ -303,15 +314,15 @@
             .logo-texto { font-size: 2.2em; }
             
             .botoes-grid {
-                /* No mobile os botões se ajustam automaticamente também */
-                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+                gap: 8px;
             }
             .grid-seringa {
-                grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
             }
             
             .btn-opcao, .input-customizado {
-                height: 50px;
+                height: 48px;
                 font-size: 0.9em;
             }
 
@@ -341,6 +352,7 @@
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 100, this)">100</button>
                     <button type="button" class="btn-opcao btn-vial" onclick="selecionarBotao('vial', 120, this)">120</button>
                     
+                    <!-- Campo Outro integrado ao design -->
                     <input type="number" id="vialCustomizado" class="input-customizado" placeholder="Outro" oninput="selecionarCustomizado('vial', this.value)" step="0.1">
                 </div>
             </div>
@@ -413,8 +425,7 @@
                 <!-- Produto 1 -->
                 <a href="https://meli.la/2fftt3T" target="_blank" class="ad-card">
                     <div class="ad-img-wrapper">
-                        <!-- Imagem já lincada com o nome do arquivo fornecido -->
-                        <img src="image_9a64b7.png" alt="Caneta Aplicadora De Insulina">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_906102-MLB111134993905_052026-F-caneta-aplicadora-de-insulina-reutilizavel-ajustavel--v1.webp" alt="Caneta Aplicadora De Insulina">
                     </div>
                     <span class="ad-title" title="Caneta Aplicadora De Insulina Reutilizável Ajustável - V1">Caneta Aplicadora De Insulina Reutilizável</span>
                     <span class="ad-cta">Comprar</span>
@@ -423,7 +434,7 @@
                 <!-- Produto 2 -->
                 <a href="https://meli.la/2XpMrzF" target="_blank" class="ad-card">
                     <div class="ad-img-wrapper">
-                        <img src="image_9a12e2.png" alt="Agulhas Uniqmed 4mm">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_668467-MLA111660989006_062026-F.webp" alt="Agulhas Uniqmed 4mm">
                     </div>
                     <span class="ad-title" title="Agulhas Para Caneta Insulina Uniqmed 4mm 32G Caixa C/100 Unidades">Agulhas Uniqmed 4mm 32G C/100 un.</span>
                     <span class="ad-cta">Comprar</span>
@@ -432,7 +443,7 @@
                 <!-- Produto 3 -->
                 <a href="https://meli.la/2fudUBQ" target="_blank" class="ad-card">
                     <div class="ad-img-wrapper">
-                        <img src="image_9a12c1.jpg" alt="Seringa Medix 1mL">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_898561-MLA80792370926_112024-F.webp" alt="Seringa Medix 1mL">
                     </div>
                     <span class="ad-title" title="Seringa Medix 1mL para Insulina e Botox, com Agulha Fixa Fina de 8x0,30mm - Pack com 100">Seringa Medix 1mL 8x0,30mm C/100</span>
                     <span class="ad-cta">Comprar</span>
@@ -441,7 +452,7 @@
                 <!-- Produto 4 -->
                 <a href="https://meli.la/1YnTMiR" target="_blank" class="ad-card">
                     <div class="ad-img-wrapper">
-                        <img src="image_9a1284.jpg" alt="Cx Seringa Cepalab">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_854198-MLB92841918617_092025-F-cx-seringa-insulinabotox-6mm-100ui-1-ml-31g-cepalab.webp" alt="Cx Seringa Cepalab">
                     </div>
                     <span class="ad-title" title="Cx Seringa Insulina/botox 6mm, 100ui, 1 Ml (31g) Cepalab">Seringa Cepalab 6mm 1Ml (31g) 100ui</span>
                     <span class="ad-cta">Comprar</span>
@@ -450,7 +461,16 @@
                 <!-- Produto 5 -->
                 <a href="https://meli.la/33khU2n" target="_blank" class="ad-card">
                     <div class="ad-img-wrapper">
-                        <img src="image_9a1248.jpg" alt="Seringa Insulina Medix">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Insulina Medix">
+                    </div>
+                    <span class="ad-title" title="Seringa Insulina 1ml Ag Fixa 6x0,25mm 31g - Kit 100un Medix">Seringa Medix 1ml Ag Fixa 31g C/100</span>
+                    <span class="ad-cta">Comprar</span>
+                </a>
+                
+                <!-- Produto 6 -->
+                <a href="https://meli.la/1CFaLLk" target="_blank" class="ad-card">
+                    <div class="ad-img-wrapper">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Insulina Medix (Pack)">
                     </div>
                     <span class="ad-title" title="Seringa Insulina 1ml Ag Fixa 6x0,25mm 31g - Kit 100un Medix">Seringa Medix 1ml Ag Fixa 31g C/100</span>
                     <span class="ad-cta">Comprar</span>
@@ -508,7 +528,7 @@
                 resetarVisualizacao();
             }
             
-            realizarCalculo(true); // Chama o cálculo no modo silencioso
+            realizarCalculo(true);
         }
 
         function selecionarCustomizado(categoria, valor) {
@@ -525,7 +545,7 @@
                 resetarVisualizacao();
             }
             
-            realizarCalculo(true); // Chama o cálculo no modo silencioso
+            realizarCalculo(true);
         }
 
         function resetarVisualizacao() {
@@ -611,7 +631,6 @@
                 document.getElementById('resRendimento').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resDuracao').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // Desliza a tela no celular para os ANÚNCIOS (o usuário vê a oferta e arrasta 1 dedo p/ ver o resultado)
                 if (window.innerWidth <= 768 && !modoAutomatico) {
                     document.getElementById('secaoAds').scrollIntoView({ behavior: 'smooth' });
                 }
