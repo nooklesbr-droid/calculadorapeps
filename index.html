@@ -42,12 +42,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ESTRUTURA PRINCIPAL (2 Colunas no Desktop) */
+        /* ESTRUTURA PRINCIPAL (2 Colunas) */
         .app-container {
             width: 100%;
             max-width: 1200px;
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 420px; /* Coluna lateral um pouco maior para acomodar anúncios lado a lado */
             gap: 30px;
             align-items: start;
         }
@@ -151,20 +151,27 @@
         input[type="number"]::-webkit-inner-spin-button, 
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-        /* COLUNA DIREITA (RESULTADOS STICKY) */
-        .painel-resultados {
+        /* COLUNA DIREITA (RESULTADOS E ANÚNCIOS STICKY) */
+        .painel-lateral {
             position: sticky;
-            top: 40px; 
+            top: 20px; 
+            max-height: calc(100vh - 40px); /* Garante que caiba na tela */
+            overflow-y: auto; /* Permite rolar a lateral se a tela for pequena */
             display: flex;
             flex-direction: column;
             gap: 20px;
+            padding-right: 5px;
+            
+            /* Esconder Scrollbar para estética limpa */
+            scrollbar-width: none; /* Firefox */
         }
+        .painel-lateral::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
         .card-resultado-primario {
             background: linear-gradient(145deg, #182232 0%, #131A26 100%);
             border: 1px solid var(--cor-destaque);
             border-radius: 16px;
-            padding: 30px 25px;
+            padding: 25px;
             text-align: center;
             box-shadow: 0 10px 30px var(--cor-destaque-glow);
         }
@@ -203,26 +210,26 @@
             background-color: var(--cor-painel);
             border: 1px solid var(--cor-borda);
             border-radius: 16px;
-            padding: 20px 25px;
+            padding: 20px;
         }
 
         .linha-secundaria {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--cor-borda);
         }
         .linha-secundaria:last-child { border-bottom: none; padding-bottom: 0; }
-        .linha-secundaria span:first-child { color: var(--texto-suave); font-size: 0.9em; }
-        .linha-secundaria span:last-child { color: var(--texto-puro); font-weight: 700; font-size: 1em; }
+        .linha-secundaria span:first-child { color: var(--texto-suave); font-size: 0.85em; }
+        .linha-secundaria span:last-child { color: var(--texto-puro); font-weight: 700; font-size: 0.95em; }
 
         /* A ILUSTRAÇÃO DA SERINGA AUTÊNTICA */
         .seringa-wrapper {
             background-color: var(--cor-painel);
             border: 1px solid var(--cor-borda);
             border-radius: 16px;
-            padding: 25px 20px;
+            padding: 20px;
             text-align: center;
         }
         .seringa-svg { width: 100%; height: 60px; margin-top: 10px; }
@@ -231,21 +238,21 @@
             transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
         }
 
-        /* CARROSSEL DE ANÚNCIOS */
+        /* -----------------------------------------------
+           SEÇÃO DE ANÚNCIOS (COMPUTADOR: GRID / CELULAR: CARROSSEL DESTACADO)
+           ----------------------------------------------- */
         .secao-anuncios {
-            grid-column: 1 / -1;
             background-color: var(--cor-painel);
             border: 1px solid var(--cor-borda);
             border-radius: 16px;
-            padding: 25px;
-            margin-top: 10px;
+            padding: 25px 20px;
             position: relative;
         }
 
         .tag-oferta {
             position: absolute;
             top: -12px;
-            left: 25px;
+            left: 20px;
             background: #fff159;
             color: #333;
             padding: 4px 12px;
@@ -258,31 +265,24 @@
 
         .secao-anuncios h3 {
             color: var(--texto-suave);
-            font-size: 1em;
+            font-size: 0.95em;
             margin-bottom: 20px;
             font-weight: 500;
+            text-align: center;
         }
         .secao-anuncios h3 span { color: #fff159; font-weight: 700; }
 
-        .carrossel {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
+        .grade-produtos {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 Colunas no Computador para caber na lateral */
+            gap: 12px;
         }
 
-        .carrossel::-webkit-scrollbar { height: 8px; }
-        .carrossel::-webkit-scrollbar-track { background: var(--cor-card); border-radius: 10px; }
-        .carrossel::-webkit-scrollbar-thumb { background: var(--cor-borda-hover); border-radius: 10px; }
-
         .card-produto {
-            flex: 0 0 150px;
             background-color: var(--cor-card);
             border: 1px solid var(--cor-borda);
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -291,15 +291,16 @@
 
         .card-produto:hover {
             border-color: #fff159;
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 241, 89, 0.1);
         }
 
         .produto-img {
             width: 100%;
-            height: 120px;
+            height: 90px;
             background: #fff;
             border-radius: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding: 5px;
             display: flex;
             align-items: center;
@@ -309,25 +310,26 @@
 
         .produto-titulo {
             color: var(--texto-puro);
-            font-size: 0.75em;
+            font-size: 0.7em;
             line-height: 1.4;
-            height: 3.1em;
+            height: 2.8em; /* Duas linhas */
             overflow: hidden;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .produto-btn {
-            background-color: rgba(255, 241, 89, 0.1);
+            background-color: rgba(255, 241, 89, 0.05);
             color: #fff159;
+            border: 1px solid rgba(255, 241, 89, 0.2);
             text-align: center;
-            padding: 8px;
+            padding: 6px;
             border-radius: 6px;
-            font-size: 0.75em;
-            font-weight: 700;
+            font-size: 0.7em;
+            font-weight: 800;
             text-transform: uppercase;
             margin-top: auto;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         .card-produto:hover .produto-btn { background-color: #fff159; color: #333; }
 
@@ -335,23 +337,21 @@
            🔴 REGRAS DE RESPONSIVIDADE (MOBILE & TABLET)
            ---------------------------------------------------- */
         
-        /* Tablets e Telas Médias (Até 1024px) */
         @media (max-width: 1024px) {
             .app-container {
-                grid-template-columns: 1fr; /* Muda para 1 coluna empilhada */
+                grid-template-columns: 1fr; /* Volta para 1 coluna empilhada */
                 gap: 25px;
             }
-            .painel-resultados {
-                position: relative; /* Remove o sticky para rolar natural */
+            .painel-lateral {
+                position: relative; /* Remove o sticky */
                 top: 0;
+                max-height: none;
+                overflow-y: visible;
             }
         }
 
-        /* Celulares e Telas Pequenas (Até 768px) */
         @media (max-width: 768px) {
-            body { 
-                padding: 20px 12px; /* Margens menores na tela do celular */
-            }
+            body { padding: 20px 12px; }
             
             .header-logo {
                 font-size: 2.1em;
@@ -359,38 +359,49 @@
                 margin-bottom: 5px;
             }
 
-            .card-grupo {
-                padding: 18px 15px; /* Mais compacto no celular */
-            }
+            .card-grupo { padding: 18px 15px; }
 
             .grade-opcoes { 
-                /* Botões menores no celular para caber mais por linha */
                 grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); 
                 gap: 8px;
             }
             
-            .grade-seringa { 
-                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); 
-            }
+            .grade-seringa { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); }
 
             .btn-opcao, .input-outro {
                 height: 48px;
                 font-size: 0.9em;
             }
 
-            .card-resultado-primario {
-                padding: 25px 20px;
-            }
-
+            .card-resultado-primario { padding: 25px 20px; }
             .res-valor { font-size: 1.9em; }
             .res-valor.menor { font-size: 1.5em; }
 
+            /* MÁGICA MOBILE: ANÚNCIOS DESTACADOS EM CARROSSEL */
             .secao-anuncios {
-                padding: 25px 15px 15px 15px; /* Menos margem lateral nos anúncios */
+                background: linear-gradient(160deg, rgba(255, 241, 89, 0.08) 0%, var(--cor-painel) 100%);
+                border: 1px solid rgba(255, 241, 89, 0.25);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                padding: 25px 15px 15px 15px;
+                margin-top: 5px;
             }
             
+            .grade-produtos {
+                display: flex;
+                overflow-x: auto;
+                gap: 15px;
+                padding-bottom: 10px;
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .grade-produtos::-webkit-scrollbar { height: 6px; }
+            .grade-produtos::-webkit-scrollbar-track { background: transparent; }
+            .grade-produtos::-webkit-scrollbar-thumb { background: rgba(255, 241, 89, 0.3); border-radius: 10px; }
+
             .card-produto {
-                flex: 0 0 135px; /* Cards levemente menores */
+                flex: 0 0 135px; /* Tamanho fixo para deslizar no celular */
+                background-color: var(--cor-painel);
             }
         }
     </style>
@@ -403,7 +414,7 @@
             Calculadora <span>PEPS</span>
         </div>
 
-        <!-- LADO ESQUERDO: CONTROLES ORIGINAIS -->
+        <!-- LADO ESQUERDO: CONTROLES -->
         <div class="painel-controles">
             
             <div class="card-grupo">
@@ -476,10 +487,9 @@
 
         </div>
 
-        <!-- LADO DIREITO: RESULTADOS -->
-        <div class="painel-resultados" id="secaoResultados">
+        <!-- LADO DIREITO: LATERAL STICKY (RESULTADOS + ANÚNCIOS) -->
+        <div class="painel-lateral" id="secaoLateral">
             
-            <!-- Quadro Principal Original -->
             <div class="card-resultado-primario" id="cardPrincipal">
                 <div class="res-titulo">Puxar na Seringa:</div>
                 <div class="res-valor" id="resMl">-- ml</div>
@@ -490,7 +500,6 @@
                 <div class="res-valor menor" id="resUI">-- UI</div>
             </div>
 
-            <!-- Gráfico Customizado Original Otimizado -->
             <div class="seringa-wrapper">
                 <div class="res-titulo">Visualização da Seringa</div>
                 <svg class="seringa-svg" viewBox="0 0 520 80" preserveAspectRatio="xMidYMid meet">
@@ -503,79 +512,78 @@
                         <rect x="60" y="20" width="400" height="40" rx="6" ry="6" />
                         <path d="M 460 35 L 485 38 L 460 41 Z" fill="var(--cor-borda)"/>
                     </g>
-                    <!-- Marcas (Geradas por JS) -->
+                    <!-- Marcas -->
                     <g id="marcas-svg"></g>
                 </svg>
             </div>
 
-            <!-- Informações Secundárias Originais -->
             <div class="card-resultado-secundario">
                 <div class="linha-secundaria">
-                    <span>Rendimento Estimado do Frasco:</span>
+                    <span>Rendimento Estimado:</span>
                     <span id="resDoses">-- doses</span>
                 </div>
                 <div class="linha-secundaria">
-                    <span>Duração (1 aplicação/semana):</span>
+                    <span>Duração (1 aplicação/sem):</span>
                     <span id="resTempo">--</span>
                 </div>
             </div>
 
-        </div>
-
-        <!-- CARROSSEL DE ANÚNCIOS (Abaixo de tudo) -->
-        <div class="secao-anuncios">
-            <span class="tag-oferta">Recomendado</span>
-            <h3>🔥 Itens essenciais no <span>Mercado Livre</span></h3>
-            
-            <div class="carrossel">
-                <a href="https://meli.la/2fftt3T" target="_blank" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_906102-MLB111134993905_052026-F-caneta-aplicadora-de-insulina-reutilizavel-ajustavel--v1.webp" alt="Caneta Aplicadora">
-                    </div>
-                    <span class="produto-titulo">Caneta Aplicadora De Insulina Reutilizável Ajustável</span>
-                    <span class="produto-btn">Comprar</span>
-                </a>
+            <!-- ANÚNCIOS: GRID no PC / CARROSSEL no CELULAR -->
+            <div class="secao-anuncios">
+                <span class="tag-oferta">Ofertas</span>
+                <h3>Itens essenciais no <span>Mercado Livre</span></h3>
                 
-                <a href="https://meli.la/2XpMrzF" target="_blank" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_668467-MLA111660989006_062026-F.webp" alt="Agulhas Uniqmed">
-                    </div>
-                    <span class="produto-titulo">Agulhas Para Caneta Insulina Uniqmed 4mm 32G</span>
-                    <span class="produto-btn">Comprar</span>
-                </a>
-                
-                <a href="https://meli.la/2fudUBQ" target="_blank" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_898561-MLA80792370926_112024-F.webp" alt="Seringa Medix">
-                    </div>
-                    <span class="produto-titulo">Seringa Medix 1mL 8x0,30mm - Pack com 100</span>
-                    <span class="produto-btn">Comprar</span>
-                </a>
-                
-                <a href="https://meli.la/1YnTMiR" target="_blank" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_854198-MLB92841918617_092025-F-cx-seringa-insulinabotox-6mm-100ui-1-ml-31g-cepalab.webp" alt="Seringa Cepalab">
-                    </div>
-                    <span class="produto-titulo">Seringa Insulina/Botox 6mm 1Ml (31g) Cepalab</span>
-                    <span class="produto-btn">Comprar</span>
-                </a>
-                
-                <a href="https://meli.la/33khU2n" target="_blank" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Medix">
-                    </div>
-                    <span class="produto-titulo">Seringa Insulina 1ml Ag Fixa 31g Kit 100un Medix</span>
-                    <span class="produto-btn">Comprar</span>
-                </a>
-                
-                <a href="https://meli.la/1CFaLLk" target="_blank" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Medix Pack">
-                    </div>
-                    <span class="produto-titulo">Seringa Insulina 1ml Ag Fixa 31g Kit 100un Medix</span>
-                    <span class="produto-btn">Comprar</span>
-                </a>
+                <div class="grade-produtos">
+                    <a href="https://meli.la/2fftt3T" target="_blank" class="card-produto">
+                        <div class="produto-img">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_906102-MLB111134993905_052026-F-caneta-aplicadora-de-insulina-reutilizavel-ajustavel--v1.webp" alt="Caneta Aplicadora">
+                        </div>
+                        <span class="produto-titulo" title="Caneta Aplicadora De Insulina Reutilizável Ajustável - V1">Caneta Aplicadora De Insulina Reutilizável</span>
+                        <span class="produto-btn">Comprar</span>
+                    </a>
+                    
+                    <a href="https://meli.la/2XpMrzF" target="_blank" class="card-produto">
+                        <div class="produto-img">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_668467-MLA111660989006_062026-F.webp" alt="Agulhas Uniqmed">
+                        </div>
+                        <span class="produto-titulo" title="Agulhas Para Caneta Insulina Uniqmed 4mm 32G Caixa C/100 Unidades">Agulhas Uniqmed 4mm 32G C/100 un.</span>
+                        <span class="produto-btn">Comprar</span>
+                    </a>
+                    
+                    <a href="https://meli.la/2fudUBQ" target="_blank" class="card-produto">
+                        <div class="produto-img">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_898561-MLA80792370926_112024-F.webp" alt="Seringa Medix">
+                        </div>
+                        <span class="produto-titulo" title="Seringa Medix 1mL para Insulina e Botox, com Agulha Fixa Fina de 8x0,30mm - Pack com 100">Seringa Medix 1mL 8x0,30mm C/100</span>
+                        <span class="produto-btn">Comprar</span>
+                    </a>
+                    
+                    <a href="https://meli.la/1YnTMiR" target="_blank" class="card-produto">
+                        <div class="produto-img">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_854198-MLB92841918617_092025-F-cx-seringa-insulinabotox-6mm-100ui-1-ml-31g-cepalab.webp" alt="Seringa Cepalab">
+                        </div>
+                        <span class="produto-titulo" title="Cx Seringa Insulina/botox 6mm, 100ui, 1 Ml (31g) Cepalab">Seringa Cepalab 6mm 1Ml (31g) 100ui</span>
+                        <span class="produto-btn">Comprar</span>
+                    </a>
+                    
+                    <a href="https://meli.la/33khU2n" target="_blank" class="card-produto">
+                        <div class="produto-img">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Medix">
+                        </div>
+                        <span class="produto-titulo" title="Seringa Insulina 1ml Ag Fixa 31g Kit 100un Medix">Seringa Medix Ag Fixa 31g C/100</span>
+                        <span class="produto-btn">Comprar</span>
+                    </a>
+                    
+                    <a href="https://meli.la/1CFaLLk" target="_blank" class="card-produto">
+                        <div class="produto-img">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Medix Pack">
+                        </div>
+                        <span class="produto-titulo" title="Seringa Insulina 1ml Ag Fixa 31g Kit 100un Medix">Seringa Medix Ag Fixa 31g C/100</span>
+                        <span class="produto-btn">Comprar</span>
+                    </a>
+                </div>
             </div>
+
         </div>
         
     </div>
@@ -632,7 +640,7 @@
                 let linhaTop = `<line x1="${pos_x}" y1="20" x2="${pos_x}" y2="30" stroke="#3A4C68" stroke-width="1.5" />`;
                 let linhaBot = `<line x1="${pos_x}" y1="50" x2="${pos_x}" y2="60" stroke="#3A4C68" stroke-width="1.5" />`;
                 
-                // Texto alternado para não poluir visualmente
+                // Texto alternado
                 let text = '';
                 if(i % 2 === 0 || i === numMarcas) {
                     text = `<text x="${pos_x}" y="75" fill="#64748B" font-size="11" font-weight="600" text-anchor="middle">${ui}</text>`;
@@ -697,9 +705,9 @@
                     document.getElementById('liquido-svg').setAttribute('width', (pct/100)*400);
                 }
 
-                // UX Mobile: Rola até o resultado automaticamente ao escolher a DOSE
+                // UX Mobile: Rola suavemente para a lateral (Resultados/Anúncios) ao inserir a dose
                 if (window.innerWidth <= 1024 && ultimaCategoriaAlterada === 'dose') {
-                    document.getElementById('secaoResultados').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('secaoLateral').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
 
             } catch(e) { console.error(e); }
