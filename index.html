@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Calculadora PEPS VIP</title>
     <style>
         /* Design System Autêntico - VIP */
@@ -77,9 +77,7 @@
             padding: 25px;
             transition: border-color 0.3s;
         }
-        .card-grupo:hover {
-            border-color: var(--cor-borda-hover);
-        }
+        .card-grupo:hover { border-color: var(--cor-borda-hover); }
 
         .label-grupo {
             display: block;
@@ -89,12 +87,9 @@
             letter-spacing: 1px;
             font-weight: 700;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        /* GRADE DE BOTÕES MELHORADA */
+        /* GRADE DE BOTÕES */
         .grade-opcoes {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
@@ -131,7 +126,7 @@
             transform: translateY(-2px);
         }
 
-        /* O CAMPO "OUTRO" INTEGRADO */
+        /* O CAMPO "OUTRO" */
         .input-outro {
             grid-column: span 2;
             background-color: rgba(0,0,0,0.2);
@@ -145,11 +140,7 @@
             transition: all 0.3s;
         }
 
-        .input-outro::placeholder {
-            color: var(--texto-mutado);
-            font-weight: 500;
-        }
-
+        .input-outro::placeholder { color: var(--texto-mutado); font-weight: 500; }
         .input-outro:focus, .input-outro:not(:placeholder-shown) {
             outline: none;
             border-color: var(--cor-destaque);
@@ -157,14 +148,13 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* REMOVER SETAS DO INPUT NUMBER */
         input[type="number"]::-webkit-inner-spin-button, 
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         /* COLUNA DIREITA (RESULTADOS STICKY) */
         .painel-resultados {
             position: sticky;
-            top: 40px; /* Gruda na tela ao rolar */
+            top: 40px; 
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -203,7 +193,6 @@
             margin: 20px 0;
         }
 
-        /* Estilo para erros de limite */
         .card-resultado-primario.erro {
             border-color: var(--cor-erro);
             box-shadow: 0 10px 30px var(--cor-erro-bg);
@@ -225,7 +214,6 @@
             border-bottom: 1px solid var(--cor-borda);
         }
         .linha-secundaria:last-child { border-bottom: none; padding-bottom: 0; }
-
         .linha-secundaria span:first-child { color: var(--texto-suave); font-size: 0.9em; }
         .linha-secundaria span:last-child { color: var(--texto-puro); font-weight: 700; font-size: 1em; }
 
@@ -240,10 +228,10 @@
         .seringa-svg { width: 100%; height: 60px; margin-top: 10px; }
         #liquido-svg {
             fill: var(--cor-destaque);
-            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Animação elástica */
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
         }
 
-        /* CARROSSEL DE ANÚNCIOS (Embaixo da coluna esquerda) */
+        /* CARROSSEL DE ANÚNCIOS */
         .secao-anuncios {
             grid-column: 1 / -1;
             background-color: var(--cor-painel);
@@ -258,7 +246,7 @@
             position: absolute;
             top: -12px;
             left: 25px;
-            background: #fff159; /* Amarelo clássico */
+            background: #fff159;
             color: #333;
             padding: 4px 12px;
             border-radius: 20px;
@@ -281,6 +269,8 @@
             gap: 15px;
             overflow-x: auto;
             padding-bottom: 10px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         .carrossel::-webkit-scrollbar { height: 8px; }
@@ -341,19 +331,67 @@
         }
         .card-produto:hover .produto-btn { background-color: #fff159; color: #333; }
 
-        /* RESPONSIVIDADE PARA CELULAR */
-        @media (max-width: 950px) {
+        /* ----------------------------------------------------
+           🔴 REGRAS DE RESPONSIVIDADE (MOBILE & TABLET)
+           ---------------------------------------------------- */
+        
+        /* Tablets e Telas Médias (Até 1024px) */
+        @media (max-width: 1024px) {
             .app-container {
-                grid-template-columns: 1fr; /* Volta para 1 coluna no celular */
+                grid-template-columns: 1fr; /* Muda para 1 coluna empilhada */
+                gap: 25px;
             }
             .painel-resultados {
-                position: relative;
+                position: relative; /* Remove o sticky para rolar natural */
                 top: 0;
             }
-            .grade-opcoes { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
-            .grade-seringa { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); }
+        }
+
+        /* Celulares e Telas Pequenas (Até 768px) */
+        @media (max-width: 768px) {
+            body { 
+                padding: 20px 12px; /* Margens menores na tela do celular */
+            }
             
-            .header-logo { text-align: center; }
+            .header-logo {
+                font-size: 2.1em;
+                text-align: center;
+                margin-bottom: 5px;
+            }
+
+            .card-grupo {
+                padding: 18px 15px; /* Mais compacto no celular */
+            }
+
+            .grade-opcoes { 
+                /* Botões menores no celular para caber mais por linha */
+                grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); 
+                gap: 8px;
+            }
+            
+            .grade-seringa { 
+                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); 
+            }
+
+            .btn-opcao, .input-outro {
+                height: 48px;
+                font-size: 0.9em;
+            }
+
+            .card-resultado-primario {
+                padding: 25px 20px;
+            }
+
+            .res-valor { font-size: 1.9em; }
+            .res-valor.menor { font-size: 1.5em; }
+
+            .secao-anuncios {
+                padding: 25px 15px 15px 15px; /* Menos margem lateral nos anúncios */
+            }
+            
+            .card-produto {
+                flex: 0 0 135px; /* Cards levemente menores */
+            }
         }
     </style>
 </head>
@@ -439,7 +477,7 @@
         </div>
 
         <!-- LADO DIREITO: RESULTADOS -->
-        <div class="painel-resultados">
+        <div class="painel-resultados" id="secaoResultados">
             
             <!-- Quadro Principal Original -->
             <div class="card-resultado-primario" id="cardPrincipal">
@@ -465,7 +503,7 @@
                         <rect x="60" y="20" width="400" height="40" rx="6" ry="6" />
                         <path d="M 460 35 L 485 38 L 460 41 Z" fill="var(--cor-borda)"/>
                     </g>
-                    <!-- Marcas (Geradas por JS para bater com o tamanho) -->
+                    <!-- Marcas (Geradas por JS) -->
                     <g id="marcas-svg"></g>
                 </svg>
             </div>
@@ -554,7 +592,7 @@
             el.classList.add('ativo');
 
             if (cat === 'seringa') desenharMarcasSvg();
-            calcular();
+            calcular(cat);
         }
 
         function setManual(cat, valor) {
@@ -569,7 +607,7 @@
             state[cat] = parseFloat(valor.replace(',', '.')); 
             
             if (cat === 'seringa') desenharMarcasSvg();
-            calcular();
+            calcular(cat);
         }
 
         function desenharMarcasSvg() {
@@ -594,7 +632,7 @@
                 let linhaTop = `<line x1="${pos_x}" y1="20" x2="${pos_x}" y2="30" stroke="#3A4C68" stroke-width="1.5" />`;
                 let linhaBot = `<line x1="${pos_x}" y1="50" x2="${pos_x}" y2="60" stroke="#3A4C68" stroke-width="1.5" />`;
                 
-                // Texto (só alguns para não poluir)
+                // Texto alternado para não poluir visualmente
                 let text = '';
                 if(i % 2 === 0 || i === numMarcas) {
                     text = `<text x="${pos_x}" y="75" fill="#64748B" font-size="11" font-weight="600" text-anchor="middle">${ui}</text>`;
@@ -613,7 +651,7 @@
             document.getElementById('cardPrincipal').classList.remove('erro');
         }
 
-        function calcular() {
+        function calcular(ultimaCategoriaAlterada) {
             if (!state.vial || !state.diluente || !state.dose || !state.seringa) {
                 limparVisor();
                 return;
@@ -629,7 +667,7 @@
                 const doseUnidades = Math.round(doseMl * 100);
                 const volumeFormatado = doseMl.toString().replace('.', ',');
 
-                // Rendimento (Lógica Original)
+                // Rendimento Original
                 const totalDoses = state.vial / state.dose;
                 const dosesFormatado = Number.isInteger(totalDoses) ? totalDoses : totalDoses.toFixed(1);
                 
@@ -639,24 +677,29 @@
                 const textoSemanas = dosesFormatado == 1 ? "1 semana" : `${dosesFormatado} semanas`;
                 const textoMeses = mesesFormatado == 1 ? "1 mês" : `${mesesFormatado} meses`;
 
-                // Imprimir Textos Originais
+                // Aplica Textos
                 document.getElementById('resMl').innerText = `${volumeFormatado} ml`;
                 document.getElementById('resUI').innerText = `${doseUnidades} UI`;
                 document.getElementById('resDoses').innerText = `${dosesFormatado} doses`;
                 document.getElementById('resTempo').innerText = `${textoSemanas} (${textoMeses})`;
 
-                // Lógica de limite da Seringa (SVG)
+                // Lógica da Seringa (SVG)
                 const cardP = document.getElementById('cardPrincipal');
                 let pct = (doseMl / state.seringa) * 100;
 
                 if (pct > 100) {
                     cardP.classList.add('erro');
                     document.getElementById('resMl').innerText = 'ERRO';
-                    document.getElementById('resUI').innerText = 'MAIOR QUE A SERINGA';
+                    document.getElementById('resUI').innerText = 'EXCEDE A SERINGA';
                     document.getElementById('liquido-svg').setAttribute('width', '0');
                 } else {
                     cardP.classList.remove('erro');
                     document.getElementById('liquido-svg').setAttribute('width', (pct/100)*400);
+                }
+
+                // UX Mobile: Rola até o resultado automaticamente ao escolher a DOSE
+                if (window.innerWidth <= 1024 && ultimaCategoriaAlterada === 'dose') {
+                    document.getElementById('secaoResultados').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
 
             } catch(e) { console.error(e); }
