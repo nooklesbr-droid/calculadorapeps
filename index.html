@@ -203,6 +203,7 @@ button { cursor: pointer; }
     gap: 10px;
 }
 .grade-larga { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+.grade-dose { grid-template-columns: repeat(8, 1fr); }
 
 .op {
     background: var(--card);
@@ -226,6 +227,8 @@ button { cursor: pointer; }
     transform: translateY(-2px);
 }
 .op[aria-pressed="true"] small { color: rgba(255,255,255,.8); }
+.op:focus { outline: none; }
+.op:focus-visible { outline: 2px solid var(--destaque-2); outline-offset: 3px; }
 
 /* CAMPO "OUTRO" */
 .outro {
@@ -482,6 +485,10 @@ button { cursor: pointer; }
     .barra { display: flex; }
 }
 
+@media (max-width: 900px) and (min-width: 641px) {
+    .grade-dose { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+}
+
 @media (max-width: 640px) {
     .app { padding: 24px 12px 110px; }
     .topo { flex-direction: column; align-items: stretch; text-align: center; }
@@ -489,6 +496,7 @@ button { cursor: pointer; }
     .grupo { padding: 18px 14px; }
     .grade { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; }
     .grade-larga { grid-template-columns: repeat(3, 1fr); }
+    .grade-dose { grid-template-columns: repeat(4, 1fr); }
     .grade-larga .op { font-size: .82rem; }
     .op, .outro input { height: 48px; }
     .resultado { padding: 20px 16px 16px; }
@@ -585,7 +593,7 @@ button { cursor: pointer; }
                     <button type="button" data-unidade="mcg" aria-pressed="false">mcg</button>
                 </div>
             </div>
-            <div class="grade" role="group" aria-labelledby="lbl-dose">
+            <div class="grade grade-dose" role="group" aria-labelledby="lbl-dose">
                 <div class="outro">
                     <input type="text" inputmode="decimal" autocomplete="off" placeholder="Outro" aria-label="Outra dose por aplicação" data-input="dose">
                     <span class="unid" id="unidDose">mg</span>
@@ -733,8 +741,9 @@ button { cursor: pointer; }
             { v: 1,   label: '1 ml',   sub: '100 UI' }
         ],
         dose: {
-            mg:  [0.25, 0.5, 1, 1.7, 2, 2.4, 2.5, 3, 4, 5, 7.5, 10, 12, 12.5, 15, 17.5, 20, 25, 30],
-            mcg: [100, 200, 250, 300, 400, 500, 750, 1000, 1500, 2000, 2500, 5000]
+            // 14 opções + campo "Outro" (ocupa 2) = 16 células: 2 linhas de 8 no PC, 4 de 4 no celular
+            mg:  [0.25, 0.5, 1, 1.7, 2, 2.4, 2.5, 5, 7.5, 10, 12.5, 15, 20, 30],
+            mcg: [100, 150, 200, 250, 300, 400, 500, 600, 750, 1000, 1500, 2000, 2500, 5000]
         },
         freq: [
             { v: 7, label: 'Diária' },
