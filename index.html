@@ -2,949 +2,1215 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Calculadora PEPS — Diluição e Dosagem de Peptídeos</title>
-<meta name="description" content="Calcule com precisão o volume a aplicar (ml e UI) a partir do total do frasco, diluente e seringa. Ferramenta gratuita de apoio à reconstituição de peptídeos.">
+<meta name="description" content="Calcule com precisão quanto puxar na seringa (ml e UI) a partir do total do frasco, do diluente e da dose. Mostra concentração, rendimento e duração do frasco. Grátis.">
 <meta name="theme-color" content="#070B12">
 <link rel="canonical" href="https://calculadorapept.onrender.com/">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070B12'/%3E%3Cpath d='M32 13c9.5 8.5 14.5 15.5 14.5 22A14.5 14.5 0 1 1 17.5 35C17.5 28.5 22.5 21.5 32 13Z' fill='%2300AEEF'/%3E%3C/svg%3E">
 
 <meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="Calculadora PEPS — Diluição e Dosagem de Peptídeos">
-<meta property="og:description" content="Calcule com precisão o volume a aplicar a partir do frasco, diluente e seringa utilizados.">
+<meta property="og:description" content="Quanto puxar na seringa, em ml e UI, a partir do frasco, diluente e dose.">
 <meta property="og:url" content="https://calculadorapept.onrender.com/">
+<meta name="twitter:card" content="summary">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Calculadora PEPS",
+  "url": "https://calculadorapept.onrender.com/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "inLanguage": "pt-BR",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://http2.mlstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* ==========================================================
-   TOKENS — Design System PEPS VIP
+   TOKENS
    ========================================================== */
 :root {
-    --cor-fundo: #070B12;
-    --cor-fundo-glow:
-        radial-gradient(circle at 14% -8%, rgba(0,174,239,0.16), transparent 42%),
-        radial-gradient(circle at 100% 0%, rgba(0,174,239,0.07), transparent 40%);
-    --cor-painel: #111926;
-    --cor-card: #17202E;
+    --fundo: #070B12;
+    --painel: #0F1622;
+    --card: #151E2C;
+    --card-2: #1A2536;
 
-    --cor-borda: #243147;
-    --cor-borda-hover: #37496A;
+    --borda: #223047;
+    --borda-hover: #34476A;
 
-    --cor-destaque: #00AEEF;
-    --cor-destaque-glow: rgba(0, 174, 239, 0.22);
-    --cor-destaque-soft: rgba(0, 174, 239, 0.08);
+    --destaque: #00AEEF;
+    --destaque-2: #4FD1FF;
+    --destaque-glow: rgba(0, 174, 239, 0.25);
+    --destaque-soft: rgba(0, 174, 239, 0.09);
 
-    --cor-vip: #FFF159;
+    --vip: #FFF159;
+    --ok: #22C55E;
+    --aviso: #F5A524;
+    --aviso-bg: rgba(245, 165, 36, 0.10);
+    --erro: #F4405F;
+    --erro-bg: rgba(244, 64, 95, 0.12);
 
-    --texto-1: #FFFFFF;
-    --texto-2: #98A7BD;
-    --texto-3: #5E6E86;
+    --t1: #FFFFFF;
+    --t2: #9AA8BE;
+    --t3: #5E6E86;
 
-    --cor-erro: #F4405F;
-    --cor-erro-bg: rgba(244, 64, 95, 0.12);
+    --f-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --f-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 
-    --fonte-display: 'Space Grotesk', 'Inter', sans-serif;
-    --fonte-base: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --r-sm: 10px;
+    --r-md: 16px;
+    --r-lg: 22px;
 
-    --raio-sm: 10px;
-    --raio-md: 16px;
-    --raio-lg: 20px;
+    --ease-mola: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ==========================================================
    BASE
    ========================================================== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { color-scheme: dark; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
 
 body {
-    background-color: var(--cor-fundo);
-    background-image: var(--cor-fundo-glow);
+    background:
+        radial-gradient(circle at 12% -10%, rgba(0,174,239,0.16), transparent 42%),
+        radial-gradient(circle at 100% 0%, rgba(0,174,239,0.06), transparent 40%),
+        var(--fundo);
     background-attachment: fixed;
-    color: var(--texto-1);
-    font-family: var(--fonte-base);
-    display: flex;
-    justify-content: center;
-    padding: 48px 20px 60px;
+    color: var(--t1);
+    font-family: var(--f-base);
+    line-height: 1.5;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
 
-button, input { font-family: inherit; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
 
-:focus-visible {
-    outline: 2px solid var(--cor-destaque);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
+:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; border-radius: 6px; }
 
-.apenas-leitor {
-    position: absolute; width: 1px; height: 1px;
-    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
-}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }
 
 /* ==========================================================
-   ESTRUTURA PRINCIPAL (2 colunas)
+   LAYOUT
    ========================================================== */
-.app-container {
+.app {
     width: 100%;
     max-width: 1200px;
+    margin: 0 auto;
+    padding: 44px 20px 60px;
     display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 30px;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 28px;
     align-items: start;
 }
 
 /* CABEÇALHO */
-.cabecalho {
+.topo {
     grid-column: 1 / -1;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 20px;
+    gap: 16px 20px;
     flex-wrap: wrap;
-    margin-bottom: 4px;
 }
-
-.marca { display: flex; flex-direction: column; gap: 8px; }
-.logo-linha { display: flex; align-items: center; gap: 10px; }
-
 .logo {
-    font-family: var(--fonte-display);
-    font-size: 2.5rem;
+    font-family: var(--f-display);
+    font-size: clamp(2rem, 5vw, 2.6rem);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1;
 }
-.logo span { color: var(--cor-destaque); }
+.logo span { color: var(--destaque); }
+.subtitulo { color: var(--t2); font-size: .95rem; margin-top: 8px; }
 
-.subtitulo { color: var(--texto-2); font-size: 0.92rem; }
+.acoes-topo { display: flex; gap: 10px; }
 
-.btn-limpar {
+.btn-sec {
+    display: inline-flex; align-items: center; gap: 8px;
     background: transparent;
-    border: 1px solid var(--cor-borda);
-    color: var(--texto-2);
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 11px 18px;
-    border-radius: var(--raio-sm);
-    cursor: pointer;
-    transition: border-color .2s ease, color .2s ease;
+    border: 1px solid var(--borda);
+    color: var(--t2);
+    font-size: .85rem; font-weight: 600;
+    padding: 10px 16px;
+    border-radius: var(--r-sm);
+    transition: border-color .2s, color .2s, background-color .2s;
     white-space: nowrap;
 }
-.btn-limpar:hover { border-color: var(--cor-borda-hover); color: var(--texto-1); }
+.btn-sec:hover { border-color: var(--borda-hover); color: var(--t1); background: rgba(255,255,255,.02); }
+.btn-sec svg { width: 16px; height: 16px; }
+.btn-sec.ok { border-color: var(--ok); color: var(--ok); }
 
-/* COLUNA ESQUERDA (CONTROLES) */
-.painel-controles { display: flex; flex-direction: column; gap: 22px; }
+/* ==========================================================
+   CONTROLES
+   ========================================================== */
+.controles { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 
-.card-grupo {
-    background-color: var(--cor-painel);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-md);
-    padding: 24px;
-    transition: border-color 0.3s;
+.grupo {
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-md);
+    padding: 22px;
+    transition: border-color .3s;
 }
-.card-grupo:hover { border-color: var(--cor-borda-hover); }
+.grupo:hover, .grupo:focus-within { border-color: var(--borda-hover); }
 
-.label-linha { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-.icon-label { width: 18px; height: 18px; color: var(--cor-destaque); flex-shrink: 0; }
+.grupo-topo {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.grupo-titulo { display: flex; align-items: center; gap: 12px; }
 
-.label-grupo {
-    color: var(--texto-2);
-    font-size: 0.78rem;
+.passo {
+    width: 26px; height: 26px; flex-shrink: 0;
+    display: grid; place-items: center;
+    border-radius: 8px;
+    background: var(--destaque-soft);
+    color: var(--destaque);
+    font-family: var(--f-display);
+    font-weight: 700; font-size: .85rem;
+    border: 1px solid rgba(0,174,239,.25);
+    transition: background-color .25s, color .25s;
+}
+.grupo.preenchido .passo { background: var(--destaque); color: #fff; border-color: var(--destaque); }
+
+.grupo-label {
+    color: var(--t2);
+    font-size: .78rem;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: .09em;
     font-weight: 700;
 }
+.grupo-dica { color: var(--t3); font-size: .78rem; margin-top: 12px; }
 
-/* GRADE DE BOTÕES */
-.grade-opcoes {
+/* GRADE */
+.grade {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
     gap: 10px;
 }
-.grade-seringa { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+.grade-larga { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
 
-/* faz os botões gerados via JS se comportarem como filhos diretos do grid */
-.opcoes-geradas { display: contents; }
-
-.btn-opcao {
-    background-color: var(--cor-card);
-    border: 1px solid var(--cor-borda);
-    color: var(--texto-2);
-    height: 52px;
-    border-radius: var(--raio-sm);
-    font-size: 0.92rem;
+.op {
+    background: var(--card);
+    border: 1px solid var(--borda);
+    color: var(--t2);
+    height: 50px;
+    border-radius: var(--r-sm);
+    font-size: .92rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    cursor: pointer;
-    transition: border-color .2s ease, color .2s ease, background-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    transition: border-color .2s, color .2s, background-color .2s, transform .2s, box-shadow .2s;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.btn-opcao:hover {
-    border-color: var(--cor-destaque);
-    color: var(--texto-1);
-    background-color: rgba(255,255,255,0.03);
-}
-
-.btn-opcao.ativo {
-    background-color: var(--cor-destaque);
-    border-color: var(--cor-destaque);
+.op small { display: block; font-size: .7rem; font-weight: 500; color: var(--t3); line-height: 1.1; transition: color .2s; }
+.op:hover { border-color: var(--destaque); color: var(--t1); background: var(--card-2); }
+.op[aria-pressed="true"] {
+    background: var(--destaque);
+    border-color: var(--destaque);
     color: #fff;
-    box-shadow: 0 4px 15px var(--cor-destaque-glow);
+    box-shadow: 0 4px 16px var(--destaque-glow);
     transform: translateY(-2px);
 }
+.op[aria-pressed="true"] small { color: rgba(255,255,255,.8); }
 
 /* CAMPO "OUTRO" */
-.input-outro {
+.outro {
     grid-column: span 2;
-    background-color: rgba(0,0,0,0.25);
-    border: 1px solid var(--cor-borda);
-    color: var(--texto-1);
-    height: 52px;
-    border-radius: var(--raio-sm);
-    text-align: center;
-    font-size: 0.92rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    transition: border-color .3s, background-color .3s, box-shadow .3s;
-    width: 100%;
-}
-.input-outro::placeholder { color: var(--texto-3); font-weight: 500; }
-.input-outro:focus, .input-outro:not(:placeholder-shown) {
-    outline: none;
-    border-color: var(--cor-destaque);
-    background-color: var(--cor-destaque-soft);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-}
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-/* COLUNA DIREITA (RESULTADOS + ANÚNCIOS, STICKY) */
-.painel-lateral {
-    position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding-right: 5px;
-    scrollbar-width: none;
-}
-.painel-lateral::-webkit-scrollbar { display: none; }
-
-.card-resultado-primario {
-    background: linear-gradient(150deg, #17202E 0%, #0F1620 100%);
-    border: 1px solid var(--cor-destaque);
-    border-radius: var(--raio-md);
-    padding: 26px 24px;
-    text-align: center;
-    box-shadow: 0 10px 30px var(--cor-destaque-glow);
-    transition: border-color .3s, box-shadow .3s;
-}
-
-.res-titulo {
-    color: var(--texto-2);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 6px;
-    font-weight: 600;
-}
-
-.res-valor {
-    font-family: var(--fonte-display);
-    color: var(--cor-destaque);
-    font-size: 2.2em;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-}
-.res-valor.menor { font-size: 1.7em; }
-
-.res-valor-linha { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
-.res-valor-linha .res-valor { margin-bottom: 0; }
-
-.btn-copiar {
-    background: transparent;
-    border: 1px solid var(--cor-borda);
-    color: var(--texto-2);
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: border-color .2s, color .2s;
-    flex-shrink: 0;
-}
-.btn-copiar:hover { border-color: var(--cor-destaque); color: var(--cor-destaque); }
-.btn-copiar svg { width: 15px; height: 15px; }
-.btn-copiar .icone-check { display: none; }
-.btn-copiar.copiado { border-color: #22C55E; color: #22C55E; }
-.btn-copiar.copiado .icone-copiar { display: none; }
-.btn-copiar.copiado .icone-check { display: inline-flex; }
-
-.linha-divisoria {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--cor-borda), transparent);
-    margin: 18px 0;
-}
-
-.card-resultado-primario.erro { border-color: var(--cor-erro); box-shadow: 0 10px 30px var(--cor-erro-bg); }
-.card-resultado-primario.erro .res-valor { color: var(--cor-erro); }
-.card-resultado-primario.erro .res-valor.menor { font-size: 1.15em; letter-spacing: -0.01em; }
-
-.card-resultado-secundario {
-    background-color: var(--cor-painel);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-md);
-    padding: 20px 22px;
-}
-.linha-secundaria {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--cor-borda);
-}
-.linha-secundaria:last-child { border-bottom: none; padding-bottom: 0; }
-.linha-secundaria span:first-child { color: var(--texto-2); font-size: 0.85em; }
-.linha-secundaria span:last-child { color: var(--texto-1); font-weight: 700; font-size: 0.95em; font-variant-numeric: tabular-nums; }
-
-/* ILUSTRAÇÃO DA SERINGA */
-.seringa-wrapper {
-    background-color: var(--cor-painel);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-md);
-    padding: 20px 20px 14px;
-    text-align: center;
-}
-.seringa-svg { width: 100%; height: 64px; margin-top: 10px; }
-#liquido-svg {
-    fill: var(--cor-destaque);
-    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), x 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), fill .3s ease;
-}
-#liquido-svg.erro { fill: var(--cor-erro); }
-#embolo-svg, #haste-svg {
-    transition: x 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), x2 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* -----------------------------------------------
-   ANÚNCIOS (COMPUTADOR: GRID / CELULAR: CARROSSEL)
-   ----------------------------------------------- */
-.secao-anuncios {
-    background-color: var(--cor-painel);
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-md);
-    padding: 25px 20px 20px;
     position: relative;
 }
+.outro input {
+    width: 100%;
+    height: 50px;
+    background: rgba(0,0,0,.25);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-sm);
+    text-align: center;
+    font-size: .92rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    padding: 0 38px 0 12px;
+    transition: border-color .25s, background-color .25s;
+}
+.outro input::placeholder { color: var(--t3); font-weight: 500; }
+.outro input:focus { outline: none; border-color: var(--destaque); background: var(--destaque-soft); }
+.outro input.tem-valor { border-color: var(--destaque); background: var(--destaque-soft); color: var(--t1); }
+.outro input.invalido { border-color: var(--erro); background: var(--erro-bg); }
+.outro .unid {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--t3); font-size: .78rem; font-weight: 600; pointer-events: none;
+}
 
+/* SEGMENTED (mg / mcg) */
+.seg {
+    display: inline-flex;
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 999px;
+    padding: 3px;
+}
+.seg button {
+    border: 0; background: transparent;
+    color: var(--t2);
+    font-size: .78rem; font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    transition: background-color .2s, color .2s;
+}
+.seg button[aria-pressed="true"] { background: var(--destaque); color: #fff; }
+
+/* ==========================================================
+   LATERAL (RESULTADOS)
+   ========================================================== */
+.lateral {
+    position: sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.resultado {
+    position: relative;
+    background: linear-gradient(155deg, #172234 0%, #0E1520 100%);
+    border: 1px solid var(--destaque);
+    border-radius: var(--r-lg);
+    padding: 24px 22px 20px;
+    box-shadow: 0 14px 34px var(--destaque-glow);
+    transition: border-color .3s, box-shadow .3s;
+    overflow: hidden;
+}
+.resultado.vazio { border-color: var(--borda); box-shadow: none; }
+.resultado.erro { border-color: var(--erro); box-shadow: 0 14px 34px var(--erro-bg); }
+
+.res-rotulo {
+    color: var(--t2);
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 700;
+}
+
+.res-principal { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
+
+.res-ui {
+    font-family: var(--f-display);
+    font-size: clamp(2.6rem, 9vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--destaque);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    transition: color .3s;
+}
+.res-ui .u { font-size: .45em; color: var(--t2); margin-left: 6px; letter-spacing: 0; }
+.resultado.vazio .res-ui { color: var(--t3); }
+.resultado.erro .res-ui { color: var(--erro); }
+
+.res-ml { color: var(--t1); font-size: 1.05rem; font-weight: 600; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.res-ml span { color: var(--t2); font-weight: 500; }
+
+.btn-copiar {
+    width: 40px; height: 40px; flex-shrink: 0;
+    display: grid; place-items: center;
+    background: transparent;
+    border: 1px solid var(--borda);
+    color: var(--t2);
+    border-radius: 10px;
+    transition: border-color .2s, color .2s;
+}
+.btn-copiar:hover:not(:disabled) { border-color: var(--destaque); color: var(--destaque); }
+.btn-copiar:disabled { opacity: .35; cursor: not-allowed; }
+.btn-copiar svg { width: 17px; height: 17px; }
+.btn-copiar .ic-ok { display: none; }
+.btn-copiar.copiado { border-color: var(--ok); color: var(--ok); }
+.btn-copiar.copiado .ic-copiar { display: none; }
+.btn-copiar.copiado .ic-ok { display: block; }
+
+/* SERINGA */
+.seringa { margin-top: 18px; }
+.seringa svg { width: 100%; height: auto; display: block; }
+#liquido { fill: url(#gradLiquido); transition: width .55s var(--ease-mola), x .55s var(--ease-mola); }
+.resultado.erro #liquido { fill: var(--erro); }
+#embolo, #haste { transition: x .55s var(--ease-mola), x1 .55s var(--ease-mola), width .55s var(--ease-mola); }
+
+/* AVISOS */
+.avisos { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.aviso {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: .82rem; line-height: 1.45;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+.aviso svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+.aviso.amarelo { color: #FFD48A; background: var(--aviso-bg); border-color: rgba(245,165,36,.3); }
+.aviso.vermelho { color: #FFB3C0; background: var(--erro-bg); border-color: rgba(244,64,95,.35); }
+.aviso b { color: #fff; }
+
+/* DETALHES */
+.detalhes {
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-md);
+    padding: 6px 20px;
+}
+.linha {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--borda);
+}
+.linha:last-child { border-bottom: 0; }
+.linha dt { color: var(--t2); font-size: .86rem; }
+.linha dd { color: var(--t1); font-weight: 700; font-size: .93rem; text-align: right; font-variant-numeric: tabular-nums; }
+.linha dd small { display: block; color: var(--t3); font-weight: 500; font-size: .76rem; }
+
+.freq-linha { padding: 14px 0 12px; border-bottom: 1px solid var(--borda); }
+.freq-linha .res-rotulo { display: block; margin-bottom: 10px; font-size: .72rem; }
+.freq { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.freq .op { height: 38px; font-size: .8rem; }
+.freq .op[aria-pressed="true"] { transform: none; }
+
+/* ==========================================================
+   ANÚNCIOS
+   ========================================================== */
+.anuncios {
+    position: relative;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-md);
+    padding: 26px 18px 16px;
+    margin-top: 6px;
+}
 .tag-oferta {
-    position: absolute;
-    top: -12px;
-    left: 20px;
-    background: linear-gradient(135deg, #fff9c4, var(--cor-vip));
+    position: absolute; top: -12px; left: 18px;
+    background: linear-gradient(135deg, #fff9c4, var(--vip));
     color: #211f0a;
     padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    border-radius: 999px;
+    font-size: .7rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .05em;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
 }
+.anuncios h2 { color: var(--t2); font-size: .92rem; font-weight: 500; text-align: center; margin-bottom: 16px; }
+.anuncios h2 span { color: var(--vip); font-weight: 700; }
 
-.secao-anuncios h3 {
-    color: var(--texto-2);
-    font-size: 0.93rem;
-    margin-bottom: 20px;
-    font-weight: 500;
-    text-align: center;
-}
-.secao-anuncios h3 span { color: var(--cor-vip); font-weight: 700; }
-
-.grade-produtos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.card-produto {
-    background-color: var(--cor-card);
-    border: 1px solid var(--cor-borda);
+.produtos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.produto {
+    display: flex; flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--borda);
     border-radius: 12px;
     padding: 10px;
     text-decoration: none;
-    display: flex;
-    flex-direction: column;
     transition: border-color .3s, transform .3s, box-shadow .3s;
 }
-.card-produto:hover {
-    border-color: var(--cor-vip);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(255, 241, 89, 0.12);
-}
-
-.produto-img {
-    width: 100%; height: 90px;
-    background: #fff;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    padding: 5px;
-    display: flex; align-items: center; justify-content: center;
-}
+.produto:hover { border-color: var(--vip); transform: translateY(-3px); box-shadow: 0 6px 16px rgba(255,241,89,.12); }
+.produto-img { height: 92px; background: #fff; border-radius: 8px; padding: 6px; margin-bottom: 10px; display: grid; place-items: center; }
 .produto-img img { width: 100%; height: 100%; object-fit: contain; }
-
 .produto-titulo {
-    color: var(--texto-1);
-    font-size: 0.7em;
-    line-height: 1.4;
-    height: 2.8em;
-    overflow: hidden;
-    text-align: center;
-    margin-bottom: 10px;
+    color: var(--t1); font-size: .72rem; line-height: 1.4; text-align: center;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    min-height: 2.8em; margin-bottom: 10px;
 }
-
 .produto-btn {
-    background-color: rgba(255, 241, 89, 0.06);
-    color: var(--cor-vip);
-    border: 1px solid rgba(255, 241, 89, 0.22);
-    text-align: center;
-    padding: 6px;
-    border-radius: 6px;
-    font-size: 0.7em;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-top: auto;
+    margin-top: auto; text-align: center;
+    background: rgba(255,241,89,.06); color: var(--vip);
+    border: 1px solid rgba(255,241,89,.22);
+    border-radius: 6px; padding: 6px;
+    font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;
     transition: background-color .3s, color .3s;
 }
-.card-produto:hover .produto-btn { background-color: var(--cor-vip); color: #211f0a; }
-
-.aviso-afiliado { color: var(--texto-3); font-size: 0.68rem; text-align: center; margin-top: 14px; line-height: 1.5; }
+.produto:hover .produto-btn { background: var(--vip); color: #211f0a; }
+.aviso-afiliado { color: var(--t3); font-size: .68rem; text-align: center; margin-top: 12px; }
 
 /* RODAPÉ */
 .rodape {
     grid-column: 1 / -1;
     text-align: center;
     padding-top: 22px;
-    margin-top: 8px;
-    border-top: 1px solid var(--cor-borda);
+    margin-top: 6px;
+    border-top: 1px solid var(--borda);
 }
-.rodape p { color: var(--texto-3); font-size: 0.76rem; line-height: 1.7; max-width: 680px; margin: 0 auto 6px; }
+.rodape p { color: var(--t3); font-size: .76rem; line-height: 1.7; max-width: 700px; margin: 0 auto 6px; }
 
-/* ----------------------------------------------------
-   RESPONSIVIDADE
-   ---------------------------------------------------- */
+/* BARRA FIXA (CELULAR) */
+.barra {
+    position: fixed; left: 12px; right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 50;
+    display: none;
+    align-items: center; justify-content: space-between; gap: 12px;
+    background: rgba(15, 22, 34, .92);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border: 1px solid var(--destaque);
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    transform: translateY(140%);
+    transition: transform .35s var(--ease-mola);
+    text-align: left;
+    width: auto;
+}
+.barra.erro { border-color: var(--erro); }
+.barra.visivel { transform: translateY(0); }
+.barra-valor { font-family: var(--f-display); font-size: 1.35rem; font-weight: 700; color: var(--destaque); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.barra.erro .barra-valor { color: var(--erro); }
+.barra-sub { color: var(--t2); font-size: .78rem; }
+.barra-ver { color: var(--t2); font-size: .78rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
 @media (max-width: 1024px) {
-    .app-container { grid-template-columns: 1fr; gap: 25px; }
-    .painel-lateral { position: relative; top: 0; max-height: none; overflow-y: visible; }
+    .app { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+    .lateral { position: static; }
+    .barra { display: flex; }
 }
 
-@media (max-width: 768px) {
-    body { padding: 24px 12px 40px; }
+@media (max-width: 640px) {
+    .app { padding: 24px 12px 110px; }
+    .topo { flex-direction: column; align-items: stretch; text-align: center; }
+    .acoes-topo { justify-content: center; }
+    .grupo { padding: 18px 14px; }
+    .grade { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; }
+    .grade-larga { grid-template-columns: repeat(3, 1fr); }
+    .grade-larga .op { font-size: .82rem; }
+    .op, .outro input { height: 48px; }
+    .resultado { padding: 20px 16px 16px; }
 
-    .cabecalho { justify-content: center; text-align: center; }
-    .marca { align-items: center; }
-    .btn-limpar { order: 3; margin: 0 auto; }
-
-    .logo { font-size: 2.1em; }
-
-    .card-grupo { padding: 18px 15px; }
-
-    .grade-opcoes { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; }
-    .grade-seringa { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); }
-
-    .btn-opcao, .input-outro { height: 48px; font-size: 0.9em; }
-
-    .card-resultado-primario { padding: 24px 18px; }
-    .res-valor { font-size: 1.9em; }
-    .res-valor.menor { font-size: 1.5em; }
-
-    .secao-anuncios {
-        background: linear-gradient(160deg, rgba(255, 241, 89, 0.08) 0%, var(--cor-painel) 100%);
-        border: 1px solid rgba(255, 241, 89, 0.25);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        padding: 25px 15px 15px;
-        margin-top: 5px;
+    .anuncios { background: linear-gradient(160deg, rgba(255,241,89,.07), var(--painel)); border-color: rgba(255,241,89,.25); }
+    .produtos {
+        display: flex; overflow-x: auto; gap: 12px; padding-bottom: 8px;
+        scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
     }
-
-    .grade-produtos {
-        display: flex;
-        overflow-x: auto;
-        gap: 15px;
-        padding-bottom: 10px;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-    }
-    .grade-produtos::-webkit-scrollbar { height: 6px; }
-    .grade-produtos::-webkit-scrollbar-track { background: transparent; }
-    .grade-produtos::-webkit-scrollbar-thumb { background: rgba(255, 241, 89, 0.3); border-radius: 10px; }
-
-    .card-produto { flex: 0 0 135px; background-color: var(--cor-painel); }
+    .produtos::-webkit-scrollbar { height: 5px; }
+    .produtos::-webkit-scrollbar-thumb { background: rgba(255,241,89,.3); border-radius: 10px; }
+    .produto { flex: 0 0 140px; scroll-snap-align: start; }
 }
 </style>
 </head>
 <body>
 
-<div class="app-container">
+<main class="app">
 
-    <header class="cabecalho">
-        <div class="marca">
-            <div class="logo-linha">
-                <span class="logo">Calculadora <span>PEPS</span></span>
-            </div>
-            <p class="subtitulo">Diluição e dosagem calculadas com precisão de instrumento.</p>
+    <header class="topo">
+        <div>
+            <h1 class="logo">Calculadora <span>PEPS</span></h1>
+            <p class="subtitulo">Diluição e dosagem de peptídeos, calculadas com precisão de instrumento.</p>
         </div>
-        <button type="button" class="btn-limpar" id="btnLimpar">Limpar tudo</button>
+        <div class="acoes-topo">
+            <button type="button" class="btn-sec" id="btnLink" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span>Copiar link</span>
+            </button>
+            <button type="button" class="btn-sec" id="btnLimpar">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Limpar</span>
+            </button>
+        </div>
     </header>
 
-    <!-- LADO ESQUERDO: CONTROLES -->
-    <div class="painel-controles">
+    <!-- CONTROLES -->
+    <section class="controles" aria-label="Dados do cálculo">
 
-        <div class="card-grupo">
-            <div class="label-linha">
-                <svg class="icon-label" viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="9" y="2" width="6" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                    <path d="M10 6v3.5L6.5 14A4 4 0 0 0 10 20.5h4A4 4 0 0 0 17.5 14L14 9.5V6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                    <line x1="7.5" y1="15" x2="16.5" y2="15" stroke="currentColor" stroke-width="1.6"/>
-                </svg>
-                <span class="label-grupo">Total do Frasco / Vial (mg)</span>
+        <div class="grupo" data-grupo="vial">
+            <div class="grupo-topo">
+                <div class="grupo-titulo">
+                    <span class="passo" aria-hidden="true">1</span>
+                    <h2 class="grupo-label" id="lbl-vial">Total do frasco (mg)</h2>
+                </div>
             </div>
-            <div class="grade-opcoes" data-grid="vial" role="group" aria-label="Total do frasco em miligramas">
-                <div class="opcoes-geradas"></div>
-                <input type="number" id="vialOutro" class="input-outro" placeholder="Outro" min="0" step="any" inputmode="decimal" aria-label="Digite outro valor para o frasco, em miligramas">
+            <div class="grade" role="group" aria-labelledby="lbl-vial">
+                <div class="outro">
+                    <input type="text" inputmode="decimal" autocomplete="off" placeholder="Outro" aria-label="Outro valor do frasco, em miligramas" data-input="vial">
+                    <span class="unid">mg</span>
+                </div>
             </div>
         </div>
 
-        <div class="card-grupo">
-            <div class="label-linha">
-                <svg class="icon-label" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 2.5c4.5 5 7.5 9 7.5 12.5a7.5 7.5 0 1 1-15 0C4.5 11.5 7.5 7.5 12 2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                </svg>
-                <span class="label-grupo">Água / Diluente Adicionado (ml)</span>
+        <div class="grupo" data-grupo="dil">
+            <div class="grupo-topo">
+                <div class="grupo-titulo">
+                    <span class="passo" aria-hidden="true">2</span>
+                    <h2 class="grupo-label" id="lbl-dil">Água / diluente adicionado (ml)</h2>
+                </div>
             </div>
-            <div class="grade-opcoes" data-grid="diluente" role="group" aria-label="Volume de diluente adicionado, em mililitros">
-                <div class="opcoes-geradas"></div>
-                <input type="number" id="diluenteOutro" class="input-outro" placeholder="Outro" min="0" step="any" inputmode="decimal" aria-label="Digite outro valor de diluente, em mililitros">
-            </div>
-        </div>
-
-        <div class="card-grupo">
-            <div class="label-linha">
-                <svg class="icon-label" viewBox="0 0 24 24" aria-hidden="true">
-                    <line x1="3" y1="21" x2="8" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                    <rect x="7.5" y="7.5" width="12" height="5" rx="1" transform="rotate(45 13.5 10)" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                    <line x1="15.5" y1="4.5" x2="19.5" y2="8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                </svg>
-                <span class="label-grupo">Seringa Utilizada (ml / UI)</span>
-            </div>
-            <div class="grade-opcoes grade-seringa" data-grid="seringa" role="group" aria-label="Capacidade da seringa utilizada">
-                <div class="opcoes-geradas"></div>
-                <input type="number" id="seringaOutro" class="input-outro" placeholder="Outro" min="0" step="any" inputmode="decimal" aria-label="Digite outra capacidade de seringa, em mililitros">
+            <div class="grade" role="group" aria-labelledby="lbl-dil">
+                <div class="outro">
+                    <input type="text" inputmode="decimal" autocomplete="off" placeholder="Outro" aria-label="Outro volume de diluente, em mililitros" data-input="dil">
+                    <span class="unid">ml</span>
+                </div>
             </div>
         </div>
 
-        <div class="card-grupo">
-            <div class="label-linha">
-                <svg class="icon-label" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                    <circle cx="12" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                    <circle cx="12" cy="12" r="0.8" fill="currentColor"/>
-                </svg>
-                <span class="label-grupo">Dose por Aplicação (mg)</span>
+        <div class="grupo" data-grupo="syr">
+            <div class="grupo-topo">
+                <div class="grupo-titulo">
+                    <span class="passo" aria-hidden="true">3</span>
+                    <h2 class="grupo-label" id="lbl-syr">Seringa utilizada</h2>
+                </div>
             </div>
-            <div class="grade-opcoes" data-grid="dose" role="group" aria-label="Dose desejada por aplicação, em miligramas">
-                <div class="opcoes-geradas"></div>
-                <input type="number" id="doseOutro" class="input-outro" placeholder="Outro" min="0" step="any" inputmode="decimal" aria-label="Digite outra dose por aplicação, em miligramas">
+            <div class="grade grade-larga" role="group" aria-labelledby="lbl-syr">
+                <div class="outro">
+                    <input type="text" inputmode="decimal" autocomplete="off" placeholder="Outra" aria-label="Outra capacidade de seringa, em mililitros" data-input="syr">
+                    <span class="unid">ml</span>
+                </div>
+            </div>
+            <p class="grupo-dica">Seringas de insulina U-100: 1 UI = 0,01 ml.</p>
+        </div>
+
+        <div class="grupo" data-grupo="dose">
+            <div class="grupo-topo">
+                <div class="grupo-titulo">
+                    <span class="passo" aria-hidden="true">4</span>
+                    <h2 class="grupo-label" id="lbl-dose">Dose por aplicação (<span id="lblUnidade">mg</span>)</h2>
+                </div>
+                <div class="seg" role="group" aria-label="Unidade da dose">
+                    <button type="button" data-unidade="mg" aria-pressed="true">mg</button>
+                    <button type="button" data-unidade="mcg" aria-pressed="false">mcg</button>
+                </div>
+            </div>
+            <div class="grade" role="group" aria-labelledby="lbl-dose">
+                <div class="outro">
+                    <input type="text" inputmode="decimal" autocomplete="off" placeholder="Outro" aria-label="Outra dose por aplicação" data-input="dose">
+                    <span class="unid" id="unidDose">mg</span>
+                </div>
             </div>
         </div>
 
-    </div>
+    </section>
 
-    <!-- LADO DIREITO: RESULTADOS + ANÚNCIOS (STICKY) -->
-    <div class="painel-lateral" id="secaoLateral">
+    <!-- RESULTADOS -->
+    <aside class="lateral" id="lateral" aria-label="Resultado">
 
-        <div class="card-resultado-primario" id="cardPrincipal" aria-live="polite">
-            <div class="res-titulo">Puxar na Seringa</div>
-            <div class="res-valor-linha">
-                <div class="res-valor" id="resMl">-- ml</div>
-                <button type="button" class="btn-copiar" id="btnCopiar" aria-label="Copiar resultado em ml" title="Copiar resultado">
-                    <svg class="icone-copiar" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-                    <svg class="icone-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="resultado vazio" id="resultado">
+            <div class="res-rotulo">Puxar na seringa</div>
+            <div class="res-principal">
+                <div>
+                    <div class="res-ui" id="resUI" aria-live="polite">--<span class="u">UI</span></div>
+                    <div class="res-ml" id="resMl">-- ml</div>
+                </div>
+                <button type="button" class="btn-copiar" id="btnCopiar" aria-label="Copiar resultado" title="Copiar resultado" disabled>
+                    <svg class="ic-copiar" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+                    <svg class="ic-ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
             </div>
 
-            <div class="linha-divisoria"></div>
-
-            <div class="res-titulo">Equivalente na Seringa de Insulina</div>
-            <div class="res-valor menor" id="resUI">-- UI</div>
-        </div>
-
-        <div class="seringa-wrapper">
-            <div class="res-titulo">Visualização da Seringa</div>
-            <svg class="seringa-svg" viewBox="0 0 520 100" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ilustração da seringa mostrando o volume a ser aplicado">
-                <!-- Flange (apoio do polegar) -->
-                <rect x="46" y="12" width="16" height="8" rx="2" fill="var(--cor-borda-hover)"/>
-                <rect x="46" y="60" width="16" height="8" rx="2" fill="var(--cor-borda-hover)"/>
-                <!-- Haste do êmbolo -->
-                <line id="haste-svg" x1="54" y1="40" x2="460" y2="40" stroke="var(--cor-borda-hover)" stroke-width="3" stroke-linecap="round"/>
-                <!-- Corpo da seringa (vazio) -->
-                <rect x="60" y="20" width="400" height="40" fill="var(--cor-fundo)" rx="6" ry="6"/>
-                <!-- Líquido dinâmico (ancorado na agulha) -->
-                <rect id="liquido-svg" x="460" y="20" width="0" height="40" rx="6" ry="6"/>
-                <!-- Brilho do vidro -->
-                <rect x="64" y="24" width="392" height="4" rx="2" fill="#FFFFFF" opacity="0.05"/>
-                <!-- Borda do corpo -->
-                <rect x="60" y="20" width="400" height="40" rx="6" ry="6" fill="none" stroke="var(--cor-borda)" stroke-width="2.5"/>
-                <!-- Êmbolo (vedação) -->
-                <rect id="embolo-svg" x="457" y="17" width="6" height="46" rx="2" fill="var(--cor-borda-hover)"/>
-                <!-- Marcas de graduação -->
-                <g id="marcas-svg" aria-hidden="true"></g>
-                <!-- Conector e agulha -->
-                <rect x="459" y="33" width="14" height="14" rx="2" fill="var(--cor-borda)"/>
-                <path d="M 473 36 L 498 39 L 473 42 Z" fill="var(--cor-borda-hover)"/>
-            </svg>
-        </div>
-
-        <div class="card-resultado-secundario">
-            <div class="linha-secundaria">
-                <span>Rendimento estimado:</span>
-                <span id="resDoses">-- doses</span>
+            <div class="seringa">
+                <svg viewBox="0 0 520 96" role="img" aria-labelledby="seringaDesc">
+                    <title id="seringaDesc">Seringa mostrando o volume a puxar</title>
+                    <defs>
+                        <linearGradient id="gradLiquido" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#4FD1FF"/>
+                            <stop offset="1" stop-color="#0090C8"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- flange -->
+                    <rect x="10" y="10" width="8" height="54" rx="3" fill="#34476A"/>
+                    <!-- haste do êmbolo -->
+                    <rect id="haste" x="14" y="33" width="446" height="8" rx="3" fill="#2A3A55"/>
+                    <rect x="30" y="24" width="10" height="26" rx="3" fill="#34476A"/>
+                    <!-- corpo -->
+                    <rect x="60" y="18" width="400" height="38" rx="6" fill="#070B12"/>
+                    <!-- líquido (ancorado no lado da agulha = marca 0) -->
+                    <rect id="liquido" x="460" y="18" width="0" height="38" rx="5"/>
+                    <!-- êmbolo (borracha) -->
+                    <rect id="embolo" x="455" y="16" width="8" height="42" rx="2.5" fill="#1d2a3f" stroke="#4A5F84" stroke-width="1"/>
+                    <!-- brilho -->
+                    <rect x="64" y="22" width="392" height="3" rx="1.5" fill="#fff" opacity=".06"/>
+                    <!-- graduação -->
+                    <g id="marcas" aria-hidden="true"></g>
+                    <!-- borda -->
+                    <rect x="60" y="18" width="400" height="38" rx="6" fill="none" stroke="#2C3C58" stroke-width="2"/>
+                    <!-- bico e agulha -->
+                    <rect x="460" y="30" width="14" height="14" rx="2" fill="#2C3C58"/>
+                    <path d="M474 35.5 L512 37 L474 38.5 Z" fill="#5E6E86"/>
+                </svg>
             </div>
-            <div class="linha-secundaria">
-                <span>Duração (1 aplicação/sem):</span>
-                <span id="resTempo">--</span>
-            </div>
+
+            <div class="avisos" id="avisos" aria-live="polite"></div>
         </div>
 
-        <!-- ANÚNCIOS: GRID no PC / CARROSSEL no CELULAR -->
-        <div class="secao-anuncios">
+        <dl class="detalhes">
+            <div class="linha">
+                <dt>Concentração</dt>
+                <dd id="resConc">--</dd>
+            </div>
+            <div class="linha">
+                <dt>Doses por frasco</dt>
+                <dd id="resDoses">--</dd>
+            </div>
+            <div class="freq-linha">
+                <span class="res-rotulo" id="lbl-freq">Frequência de aplicação</span>
+                <div class="freq" role="group" aria-labelledby="lbl-freq" id="freq"></div>
+            </div>
+            <div class="linha">
+                <dt>Duração do frasco</dt>
+                <dd id="resTempo">--</dd>
+            </div>
+        </dl>
+
+        <section class="anuncios" aria-label="Ofertas">
             <span class="tag-oferta">Ofertas</span>
-            <h3>Itens essenciais no <span>Mercado Livre</span></h3>
-
-            <div class="grade-produtos">
-                <a href="https://meli.la/2fftt3T" target="_blank" rel="noopener noreferrer sponsored" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_906102-MLB111134993905_052026-F-caneta-aplicadora-de-insulina-reutilizavel-ajustavel--v1.webp" alt="Caneta Aplicadora de Insulina Reutilizável" loading="lazy" decoding="async">
-                    </div>
-                    <span class="produto-titulo" title="Caneta Aplicadora De Insulina Reutilizável Ajustável - V1">Caneta Aplicadora De Insulina Reutilizável</span>
-                    <span class="produto-btn">Comprar</span>
+            <h2>Itens essenciais no <span>Mercado Livre</span></h2>
+            <div class="produtos">
+                <a href="https://meli.la/2fftt3T" target="_blank" rel="noopener noreferrer sponsored" class="produto">
+                    <div class="produto-img"><img src="https://http2.mlstatic.com/D_NQ_NP_2X_906102-MLB111134993905_052026-F-caneta-aplicadora-de-insulina-reutilizavel-ajustavel--v1.webp" alt="Caneta aplicadora de insulina reutilizável" width="160" height="80" loading="lazy" decoding="async"></div>
+                    <span class="produto-titulo">Caneta Aplicadora de Insulina Reutilizável</span>
+                    <span class="produto-btn">Ver oferta</span>
                 </a>
-
-                <a href="https://meli.la/2XpMrzF" target="_blank" rel="noopener noreferrer sponsored" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_668467-MLA111660989006_062026-F.webp" alt="Agulhas Uniqmed 4mm 32G" loading="lazy" decoding="async">
-                    </div>
-                    <span class="produto-titulo" title="Agulhas Para Caneta Insulina Uniqmed 4mm 32G Caixa C/100 Unidades">Agulhas Uniqmed 4mm 32G C/100 un.</span>
-                    <span class="produto-btn">Comprar</span>
+                <a href="https://meli.la/2XpMrzF" target="_blank" rel="noopener noreferrer sponsored" class="produto">
+                    <div class="produto-img"><img src="https://http2.mlstatic.com/D_NQ_NP_2X_668467-MLA111660989006_062026-F.webp" alt="Agulhas Uniqmed 4mm 32G" width="160" height="80" loading="lazy" decoding="async"></div>
+                    <span class="produto-titulo">Agulhas Uniqmed 4mm 32G — 100 un.</span>
+                    <span class="produto-btn">Ver oferta</span>
                 </a>
-
-                <a href="https://meli.la/2fudUBQ" target="_blank" rel="noopener noreferrer sponsored" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_898561-MLA80792370926_112024-F.webp" alt="Seringa Medix 1mL" loading="lazy" decoding="async">
-                    </div>
-                    <span class="produto-titulo" title="Seringa Medix 1mL para Insulina e Botox, com Agulha Fixa Fina de 8x0,30mm - Pack com 100">Seringa Medix 1mL 8x0,30mm C/100</span>
-                    <span class="produto-btn">Comprar</span>
+                <a href="https://meli.la/2fudUBQ" target="_blank" rel="noopener noreferrer sponsored" class="produto">
+                    <div class="produto-img"><img src="https://http2.mlstatic.com/D_NQ_NP_2X_898561-MLA80792370926_112024-F.webp" alt="Seringa Medix 1 ml" width="160" height="80" loading="lazy" decoding="async"></div>
+                    <span class="produto-titulo">Seringa Medix 1 ml 8x0,30mm — 100 un.</span>
+                    <span class="produto-btn">Ver oferta</span>
                 </a>
-
-                <a href="https://meli.la/1YnTMiR" target="_blank" rel="noopener noreferrer sponsored" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_854198-MLB92841918617_092025-F-cx-seringa-insulinabotox-6mm-100ui-1-ml-31g-cepalab.webp" alt="Seringa Cepalab 6mm 100ui" loading="lazy" decoding="async">
-                    </div>
-                    <span class="produto-titulo" title="Cx Seringa Insulina/botox 6mm, 100ui, 1 Ml (31g) Cepalab">Seringa Cepalab 6mm 1Ml (31g) 100ui</span>
-                    <span class="produto-btn">Comprar</span>
+                <a href="https://meli.la/1YnTMiR" target="_blank" rel="noopener noreferrer sponsored" class="produto">
+                    <div class="produto-img"><img src="https://http2.mlstatic.com/D_NQ_NP_2X_854198-MLB92841918617_092025-F-cx-seringa-insulinabotox-6mm-100ui-1-ml-31g-cepalab.webp" alt="Seringa Cepalab 6mm 100 UI" width="160" height="80" loading="lazy" decoding="async"></div>
+                    <span class="produto-titulo">Seringa Cepalab 6mm 1 ml (31G) 100 UI</span>
+                    <span class="produto-btn">Ver oferta</span>
                 </a>
-
-                <a href="https://meli.la/33khU2n" target="_blank" rel="noopener noreferrer sponsored" class="card-produto">
-                    <div class="produto-img">
-                        <img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Medix Agulha Fixa 31G" loading="lazy" decoding="async">
-                    </div>
-                    <span class="produto-titulo" title="Seringa Insulina 1ml Ag Fixa 31g Kit 100un Medix">Seringa Medix Ag Fixa 31g C/100</span>
-                    <span class="produto-btn">Comprar</span>
+                <a href="https://meli.la/33khU2n" target="_blank" rel="noopener noreferrer sponsored" class="produto">
+                    <div class="produto-img"><img src="https://http2.mlstatic.com/D_NQ_NP_2X_739455-MLB112422898766_062026-F-seringa-insulina-1ml-ag-fixa-6x025mm-31g--kit-100un-medix.webp" alt="Seringa Medix agulha fixa 31G" width="160" height="80" loading="lazy" decoding="async"></div>
+                    <span class="produto-titulo">Seringa Medix Agulha Fixa 31G — 100 un.</span>
+                    <span class="produto-btn">Ver oferta</span>
                 </a>
             </div>
             <p class="aviso-afiliado">Contém links de afiliado — podemos ganhar uma comissão sobre as compras.</p>
-        </div>
+        </section>
 
-    </div>
+    </aside>
 
     <footer class="rodape">
-        <p>Esta calculadora é uma ferramenta de apoio ao cálculo matemático de diluição e não substitui orientação médica, farmacêutica ou de um profissional de saúde. Confira sempre os valores antes de aplicar.</p>
+        <p>Esta calculadora faz apenas o cálculo matemático de diluição e não substitui orientação médica, farmacêutica ou de um profissional de saúde. Confira sempre os valores antes de aplicar e siga a prescrição recebida.</p>
     </footer>
 
-</div>
+</main>
+
+<!-- Barra fixa com o resultado (celular/tablet) -->
+<button type="button" class="barra" id="barra" aria-label="Ver resultado completo" tabindex="-1">
+    <div>
+        <div class="barra-valor" id="barraValor">--</div>
+        <div class="barra-sub" id="barraSub"></div>
+    </div>
+    <span class="barra-ver">Ver detalhes
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+</button>
 
 <script>
 (function () {
     'use strict';
 
-    /* ---------- Configuração das opções ---------- */
+    /* ======================================================
+       CONFIGURAÇÃO
+       ====================================================== */
     var CONFIG = {
         vial: [5, 10, 15, 20, 30, 40, 50, 60, 100, 120],
-        diluente: [0.5, 1, 1.5, 2, 2.5, 3, 5, 10],
-        dose: [0.25, 0.5, 1, 1.7, 2, 2.4, 2.5, 3, 4, 5, 7.5, 10, 12, 12.5, 15, 17.5, 20, 25, 30],
-        seringa: [
-            { v: 0.3, label: '0,3 (30 UI)' },
-            { v: 0.5, label: '0,5 (50 UI)' },
-            { v: 1,   label: '1,0 (100 UI)' }
+        dil:  [0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 10],
+        syr:  [
+            { v: 0.3, label: '0,3 ml', sub: '30 UI' },
+            { v: 0.5, label: '0,5 ml', sub: '50 UI' },
+            { v: 1,   label: '1 ml',   sub: '100 UI' }
         ],
-        seringaPadrao: 1
+        dose: {
+            mg:  [0.25, 0.5, 1, 1.7, 2, 2.4, 2.5, 3, 4, 5, 7.5, 10, 12, 12.5, 15, 17.5, 20, 25, 30],
+            mcg: [100, 200, 250, 300, 400, 500, 750, 1000, 1500, 2000, 2500, 5000]
+        },
+        freq: [
+            { v: 7, label: 'Diária' },
+            { v: 3, label: '3x/sem' },
+            { v: 2, label: '2x/sem' },
+            { v: 1, label: '1x/sem' }
+        ],
+        padrao: { syr: 1, unidade: 'mg', freq: 1 },
+        uiMinLegivel: 2,          // abaixo disso a medição na seringa fica imprecisa
+        chaveStorage: 'peps:v2'
     };
 
-    var state = { vial: null, diluente: null, dose: null, seringa: CONFIG.seringaPadrao };
-    var resultadoVisivel = false;
+    // dose é guardada na unidade exibida (mg ou mcg)
+    var state = { vial: null, dil: null, syr: CONFIG.padrao.syr, dose: null, unidade: CONFIG.padrao.unidade, freq: CONFIG.padrao.freq };
+    var ultimo = null;   // último resultado válido
+    var resultadoNaTela = true;
+    var $ = function (id) { return document.getElementById(id); };
     var els = {};
 
+    /* ======================================================
+       FORMATAÇÃO / PARSE
+       ====================================================== */
+    var cacheFmt = {};
+    function fmt(n, casas) {
+        casas = casas == null ? 2 : casas;
+        if (!cacheFmt[casas]) cacheFmt[casas] = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: casas });
+        return cacheFmt[casas].format(n);
+    }
+    function parseNum(str) {
+        if (str == null) return NaN;
+        var s = String(str).trim().replace(/\s/g, '').replace(',', '.');
+        if (!/^\d*\.?\d+$|^\d+\.$/.test(s)) return NaN;
+        return parseFloat(s);
+    }
+    function igual(a, b) { return a != null && b != null && Math.abs(a - b) < 1e-9; }
+    function plural(n, sing, plur) { return (n === 1 ? sing : plur); }
+
+    /* ======================================================
+       INICIALIZAÇÃO
+       ====================================================== */
     document.addEventListener('DOMContentLoaded', init);
 
     function init() {
-        cacheEls();
-        renderGrids();
-        attachEvents();
-        desenharMarcasSvg();
-        limparVisor();
+        els.resultado = $('resultado');
+        els.resUI = $('resUI');
+        els.resMl = $('resMl');
+        els.avisos = $('avisos');
+        els.resConc = $('resConc');
+        els.resDoses = $('resDoses');
+        els.resTempo = $('resTempo');
+        els.liquido = $('liquido');
+        els.embolo = $('embolo');
+        els.haste = $('haste');
+        els.marcas = $('marcas');
+        els.btnCopiar = $('btnCopiar');
+        els.btnLink = $('btnLink');
+        els.barra = $('barra');
+        els.barraValor = $('barraValor');
+        els.barraSub = $('barraSub');
+
+        carregarEstado();
+        renderTudo();
+        ligarEventos();
+        observarResultado();
+        calcular();
     }
 
-    function cacheEls() {
-        els.resMl = document.getElementById('resMl');
-        els.resUI = document.getElementById('resUI');
-        els.resDoses = document.getElementById('resDoses');
-        els.resTempo = document.getElementById('resTempo');
-        els.cardPrincipal = document.getElementById('cardPrincipal');
-        els.liquidoSvg = document.getElementById('liquido-svg');
-        els.emboloSvg = document.getElementById('embolo-svg');
-        els.hasteSvg = document.getElementById('haste-svg');
-        els.marcasSvg = document.getElementById('marcas-svg');
-        els.secaoLateral = document.getElementById('secaoLateral');
-        els.btnCopiar = document.getElementById('btnCopiar');
-        els.btnLimpar = document.getElementById('btnLimpar');
+    /* ======================================================
+       RENDER DOS BOTÕES
+       ====================================================== */
+    function criarBotao(cat, v, label, sub) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'op';
+        b.dataset.cat = cat;
+        b.dataset.valor = v;
+        b.setAttribute('aria-pressed', 'false');
+        b.textContent = label;
+        if (sub) {
+            var s = document.createElement('small');
+            s.textContent = sub;
+            b.appendChild(s);
+        }
+        return b;
     }
 
-    /* ---------- Geração das grades de botões ---------- */
-    function renderGrids() {
-        renderBotoes('vial', CONFIG.vial, function (v) { return String(v); });
-        renderBotoes('diluente', CONFIG.diluente, formatarNumero);
-        renderBotoes('dose', CONFIG.dose, formatarNumero);
-        renderSeringa();
-    }
-
-    function renderBotoes(cat, valores, formatarLabel) {
-        var alvo = document.querySelector('[data-grid="' + cat + '"] .opcoes-geradas');
+    function renderGrade(cat) {
+        var grade = document.querySelector('[data-grupo="' + cat + '"] .grade');
+        grade.querySelectorAll('.op').forEach(function (b) { b.remove(); });
+        var outro = grade.querySelector('.outro');
         var frag = document.createDocumentFragment();
-        valores.forEach(function (v) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'btn-opcao btn-' + cat;
-            btn.dataset.valor = v;
-            btn.setAttribute('aria-pressed', 'false');
-            btn.textContent = formatarLabel(v);
-            frag.appendChild(btn);
-        });
-        alvo.appendChild(frag);
+
+        if (cat === 'syr') {
+            CONFIG.syr.forEach(function (o) { frag.appendChild(criarBotao(cat, o.v, o.label, o.sub)); });
+        } else {
+            var lista = cat === 'dose' ? CONFIG.dose[state.unidade] : CONFIG[cat];
+            lista.forEach(function (v) { frag.appendChild(criarBotao(cat, v, fmt(v, 3))); });
+        }
+        grade.insertBefore(frag, outro);
     }
 
-    function renderSeringa() {
-        var alvo = document.querySelector('[data-grid="seringa"] .opcoes-geradas');
-        var frag = document.createDocumentFragment();
-        CONFIG.seringa.forEach(function (opcao) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'btn-opcao btn-seringa';
-            btn.dataset.valor = opcao.v;
-            btn.textContent = opcao.label;
-            var ativo = opcao.v === CONFIG.seringaPadrao;
-            btn.setAttribute('aria-pressed', ativo ? 'true' : 'false');
-            if (ativo) btn.classList.add('ativo');
-            frag.appendChild(btn);
-        });
-        alvo.appendChild(frag);
+    function renderFreq() {
+        var alvo = $('freq');
+        alvo.innerHTML = '';
+        CONFIG.freq.forEach(function (o) { alvo.appendChild(criarBotao('freq', o.v, o.label)); });
     }
 
-    /* ---------- Eventos ---------- */
-    function attachEvents() {
-        document.querySelectorAll('.grade-opcoes').forEach(function (grid) {
-            grid.addEventListener('click', function (e) {
-                var btn = e.target.closest('.btn-opcao');
-                if (!btn) return;
-                selecionarOpcao(grid.dataset.grid, parseFloat(btn.dataset.valor), btn);
+    function renderTudo() {
+        ['vial', 'dil', 'syr', 'dose'].forEach(renderGrade);
+        renderFreq();
+        atualizarUnidadeUI();
+        ['vial', 'dil', 'syr', 'dose', 'freq'].forEach(function (c) { sincronizar(c, false); });
+        desenharMarcas();
+    }
+
+    // marca o botão ativo e preenche o campo "Outro" se o valor não for um preset
+    function sincronizar(cat, manterInput) {
+        var valor = state[cat];
+        var algumAtivo = false;
+        document.querySelectorAll('.op[data-cat="' + cat + '"]').forEach(function (b) {
+            var ativo = igual(parseFloat(b.dataset.valor), valor);
+            if (ativo) algumAtivo = true;
+            b.setAttribute('aria-pressed', ativo ? 'true' : 'false');
+        });
+
+        var grupo = document.querySelector('[data-grupo="' + cat + '"]');
+        if (grupo) grupo.classList.toggle('preenchido', valor != null);
+
+        var input = document.querySelector('[data-input="' + cat + '"]');
+        if (!input || manterInput) return;
+        if (valor != null && !algumAtivo) {
+            input.value = fmt(valor, 4);
+            input.classList.add('tem-valor');
+        } else {
+            input.value = '';
+            input.classList.remove('tem-valor');
+        }
+        input.classList.remove('invalido');
+    }
+
+    function atualizarUnidadeUI() {
+        $('lblUnidade').textContent = state.unidade;
+        $('unidDose').textContent = state.unidade;
+        document.querySelectorAll('[data-unidade]').forEach(function (b) {
+            b.setAttribute('aria-pressed', b.dataset.unidade === state.unidade ? 'true' : 'false');
+        });
+    }
+
+    /* ======================================================
+       EVENTOS
+       ====================================================== */
+    function ligarEventos() {
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest('.op');
+            if (!b) return;
+            var cat = b.dataset.cat;
+            state[cat] = parseFloat(b.dataset.valor);
+            sincronizar(cat, false);
+            if (cat === 'syr') desenharMarcas();
+            calcular();
+        });
+
+        document.querySelectorAll('[data-input]').forEach(function (input) {
+            var cat = input.dataset.input;
+            input.addEventListener('input', function () {
+                var bruto = input.value.trim();
+                var v = parseNum(bruto);
+                var valido = !isNaN(v) && v > 0;
+
+                input.classList.toggle('tem-valor', valido);
+                input.classList.toggle('invalido', bruto !== '' && !valido);
+
+                if (valido) state[cat] = v;
+                else if (cat === 'syr') state.syr = CONFIG.padrao.syr;
+                else state[cat] = null;
+
+                sincronizar(cat, true);
+                if (cat === 'syr') desenharMarcas();
+                calcular();
             });
+            input.addEventListener('keydown', function (e) { if (e.key === 'Enter') input.blur(); });
         });
 
-        document.querySelectorAll('.input-outro').forEach(function (input) {
-            var cat = input.id.replace('Outro', '');
-            input.addEventListener('input', function () { definirManual(cat, input.value); });
+        document.querySelectorAll('[data-unidade]').forEach(function (b) {
+            b.addEventListener('click', function () { trocarUnidade(b.dataset.unidade); });
         });
 
         els.btnCopiar.addEventListener('click', copiarResultado);
-        els.btnLimpar.addEventListener('click', resetarTudo);
+        els.btnLink.addEventListener('click', copiarLink);
+        $('btnLimpar').addEventListener('click', resetar);
+        els.barra.addEventListener('click', function () {
+            els.resultado.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
     }
 
-    function selecionarOpcao(cat, valor, btnEl) {
-        state[cat] = valor;
-        var outro = document.getElementById(cat + 'Outro');
-        if (outro) outro.value = '';
-
-        document.querySelectorAll('[data-grid="' + cat + '"] .btn-opcao').forEach(function (b) {
-            b.classList.remove('ativo');
-            b.setAttribute('aria-pressed', 'false');
-        });
-        btnEl.classList.add('ativo');
-        btnEl.setAttribute('aria-pressed', 'true');
-
-        if (cat === 'seringa') desenharMarcasSvg();
-        calcular(cat);
-    }
-
-    function definirManual(cat, valorStr) {
-        document.querySelectorAll('[data-grid="' + cat + '"] .btn-opcao').forEach(function (b) {
-            b.classList.remove('ativo');
-            b.setAttribute('aria-pressed', 'false');
-        });
-
-        var valor = parseFloat(String(valorStr).replace(',', '.'));
-        if (!valorStr || isNaN(valor) || valor <= 0) {
-            state[cat] = null;
-            limparVisor();
-            return;
+    function trocarUnidade(nova) {
+        if (nova === state.unidade) return;
+        if (state.dose != null) {
+            state.dose = nova === 'mcg' ? state.dose * 1000 : state.dose / 1000;
+            state.dose = Math.round(state.dose * 1e6) / 1e6;
         }
-        state[cat] = valor;
-        if (cat === 'seringa') desenharMarcasSvg();
-        calcular(cat);
+        state.unidade = nova;
+        renderGrade('dose');
+        atualizarUnidadeUI();
+        sincronizar('dose', false);
+        calcular();
     }
 
-    function resetarTudo() {
-        state.vial = null; state.diluente = null; state.dose = null; state.seringa = CONFIG.seringaPadrao;
+    function resetar() {
+        state = { vial: null, dil: null, syr: CONFIG.padrao.syr, dose: null, unidade: CONFIG.padrao.unidade, freq: CONFIG.padrao.freq };
+        renderTudo();
+        calcular();
+        try { history.replaceState(null, '', location.pathname); } catch (e) {}
+    }
 
-        document.querySelectorAll('.btn-opcao').forEach(function (b) {
-            b.classList.remove('ativo');
-            b.setAttribute('aria-pressed', 'false');
+    function feedback(btn, classe) {
+        btn.classList.add(classe);
+        setTimeout(function () { btn.classList.remove(classe); }, 1600);
+    }
+
+    function copiarTexto(texto) {
+        if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(texto);
+        return new Promise(function (ok, falha) {
+            var ta = document.createElement('textarea');
+            ta.value = texto; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy') ? ok() : falha(); } catch (e) { falha(e); }
+            document.body.removeChild(ta);
         });
-        document.querySelectorAll('.input-outro').forEach(function (i) { i.value = ''; });
-
-        var btnPadrao = document.querySelector('[data-grid="seringa"] .btn-opcao[data-valor="' + CONFIG.seringaPadrao + '"]');
-        if (btnPadrao) { btnPadrao.classList.add('ativo'); btnPadrao.setAttribute('aria-pressed', 'true'); }
-
-        desenharMarcasSvg();
-        limparVisor();
     }
 
     function copiarResultado() {
-        var texto = els.resMl.textContent;
-        if (!texto || texto.indexOf('--') !== -1 || els.cardPrincipal.classList.contains('erro')) return;
-        if (!navigator.clipboard) return;
-        navigator.clipboard.writeText(texto).then(function () {
-            els.btnCopiar.classList.add('copiado');
-            setTimeout(function () { els.btnCopiar.classList.remove('copiado'); }, 1500);
+        if (!ultimo || ultimo.excede) return;
+        var r = ultimo;
+        var texto = 'Puxar ' + fmt(r.ui, 1) + ' UI (' + fmt(r.ml, 3) + ' ml) — dose de ' +
+            fmt(state.dose, 3) + ' ' + state.unidade + ', frasco de ' + fmt(state.vial, 3) +
+            ' mg com ' + fmt(state.dil, 2) + ' ml de diluente.';
+        copiarTexto(texto).then(function () { feedback(els.btnCopiar, 'copiado'); }).catch(function () {});
+    }
+
+    function urlEstado() {
+        var p = new URLSearchParams();
+        p.set('f', state.vial); p.set('a', state.dil); p.set('s', state.syr);
+        p.set('d', state.dose); p.set('u', state.unidade); p.set('q', state.freq);
+        return location.origin + location.pathname + '?' + p.toString();
+    }
+
+    function copiarLink() {
+        if (!ultimo) return;
+        var span = els.btnLink.querySelector('span');
+        copiarTexto(urlEstado()).then(function () {
+            span.textContent = 'Link copiado';
+            feedback(els.btnLink, 'ok');
+            setTimeout(function () { span.textContent = 'Copiar link'; }, 1600);
         }).catch(function () {});
     }
 
-    /* ---------- Desenho das marcas de graduação ---------- */
-    function desenharMarcasSvg() {
-        var tam = state.seringa || CONFIG.seringaPadrao;
-        var passoMl, numMarcas;
+    /* ======================================================
+       PERSISTÊNCIA (URL > localStorage)
+       ====================================================== */
+    function valPos(v) { var n = parseFloat(v); return isFinite(n) && n > 0 ? n : null; }
 
-        if (tam === 1) { passoMl = 0.1; numMarcas = 10; }
-        else if (tam === 0.5) { passoMl = 0.05; numMarcas = 10; }
-        else if (tam === 0.3) { passoMl = 0.05; numMarcas = 6; }
-        else { passoMl = tam / 10; numMarcas = 10; }
-
-        var maxUi = tam * 100;
-        var stepUi = maxUi / numMarcas;
-        var partes = [];
-
-        for (var i = 1; i <= numMarcas; i++) {
-            var x = 60 + (i / numMarcas) * 400;
-            var ui = Math.round(i * stepUi);
-
-            partes.push('<line x1="' + x + '" y1="20" x2="' + x + '" y2="30" stroke="#3A4C68" stroke-width="1.5" />');
-            partes.push('<line x1="' + x + '" y1="50" x2="' + x + '" y2="60" stroke="#3A4C68" stroke-width="1.5" />');
-
-            if (i % 2 === 0 || i === numMarcas) {
-                partes.push('<text x="' + x + '" y="76" fill="#64748B" font-size="11" font-weight="600" text-anchor="middle">' + ui + '</text>');
-            }
-        }
-        partes.push('<text x="50" y="76" fill="#64748B" font-size="11" font-weight="600" text-anchor="end">UI</text>');
-        els.marcasSvg.innerHTML = partes.join('');
-    }
-
-    /* ---------- Visualização da seringa (líquido, êmbolo, haste) ---------- */
-    function atualizarSeringaVisual(percentual) {
-        var larguraBarril = 400; // corpo da seringa: x 60 a 460
-        var pct = Math.max(0, Math.min(percentual, 100));
-        var largura = (pct / 100) * larguraBarril;
-        var x = 460 - largura;
-
-        els.liquidoSvg.setAttribute('width', largura);
-        els.liquidoSvg.setAttribute('x', x);
-        els.emboloSvg.setAttribute('x', x - 3);
-        els.hasteSvg.setAttribute('x2', x);
-    }
-
-    /* ---------- Estado vazio ---------- */
-    function limparVisor() {
-        resultadoVisivel = false;
-        els.resMl.textContent = '-- ml';
-        els.resUI.textContent = '-- UI';
-        els.resDoses.textContent = '-- doses';
-        els.resTempo.textContent = '--';
-        els.cardPrincipal.classList.remove('erro');
-        els.liquidoSvg.classList.remove('erro');
-        atualizarSeringaVisual(0);
-    }
-
-    function formatarNumero(valor) {
-        return String(valor).replace('.', ',');
-    }
-
-    /* ---------- Cálculo principal ---------- */
-    function calcular(ultimaCategoria) {
-        if (!state.vial || !state.diluente || !state.dose || !state.seringa) { limparVisor(); return; }
-        if (state.vial <= 0 || state.diluente <= 0 || state.dose <= 0 || state.seringa <= 0) { limparVisor(); return; }
-
+    function carregarEstado() {
+        var origem = null;
         try {
-            var concentracao = state.vial / state.diluente;
-            var doseMl = parseFloat((state.dose / concentracao).toFixed(3));
-            var doseUI = Math.round(doseMl * 100);
-
-            var totalDoses = state.vial / state.dose;
-            var dosesFmt = Number.isInteger(totalDoses) ? totalDoses : totalDoses.toFixed(1);
-            var meses = totalDoses / 4;
-            var mesesFmt = Number.isInteger(meses) ? meses : meses.toFixed(1);
-
-            var txtSemanas = dosesFmt == 1 ? '1 semana' : formatarNumero(dosesFmt) + ' semanas';
-            var txtMeses = mesesFmt == 1 ? '1 mês' : formatarNumero(mesesFmt) + ' meses';
-
-            els.resDoses.textContent = formatarNumero(dosesFmt) + ' doses';
-            els.resTempo.textContent = txtSemanas + ' (' + txtMeses + ')';
-
-            var pct = (doseMl / state.seringa) * 100;
-
-            if (pct > 100) {
-                els.cardPrincipal.classList.add('erro');
-                els.liquidoSvg.classList.add('erro');
-                els.resMl.textContent = formatarNumero(doseMl) + ' ml';
-                els.resUI.textContent = 'Excede a seringa selecionada';
-                atualizarSeringaVisual(100);
-            } else {
-                els.cardPrincipal.classList.remove('erro');
-                els.liquidoSvg.classList.remove('erro');
-                els.resMl.textContent = formatarNumero(doseMl) + ' ml';
-                els.resUI.textContent = doseUI + ' UI';
-                atualizarSeringaVisual(pct);
+            var p = new URLSearchParams(location.search);
+            if (p.has('f') || p.has('d')) {
+                origem = { vial: p.get('f'), dil: p.get('a'), syr: p.get('s'), dose: p.get('d'), unidade: p.get('u'), freq: p.get('q') };
             }
-
-            if (window.innerWidth <= 1024 && ultimaCategoria === 'dose' && !resultadoVisivel) {
-                els.secaoLateral.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            resultadoVisivel = true;
-
-        } catch (e) {
-            console.error(e);
+        } catch (e) {}
+        if (!origem) {
+            try { origem = JSON.parse(localStorage.getItem(CONFIG.chaveStorage) || 'null'); } catch (e) { origem = null; }
         }
+        if (!origem) return;
+
+        state.vial = valPos(origem.vial);
+        state.dil = valPos(origem.dil);
+        state.syr = valPos(origem.syr) || CONFIG.padrao.syr;
+        state.dose = valPos(origem.dose);
+        state.unidade = origem.unidade === 'mcg' ? 'mcg' : 'mg';
+        var f = valPos(origem.freq);
+        state.freq = CONFIG.freq.some(function (o) { return o.v === f; }) ? f : CONFIG.padrao.freq;
+    }
+
+    function salvarEstado() {
+        try { localStorage.setItem(CONFIG.chaveStorage, JSON.stringify(state)); } catch (e) {}
+    }
+
+    /* ======================================================
+       SERINGA (SVG)
+       Escala com o ZERO NO LADO DA AGULHA, como numa seringa real.
+       ====================================================== */
+    var X0 = 460, LARG = 400; // corpo: x 60 → 460
+
+    function escalaSeringa() {
+        var cap = state.syr;
+        if (cap <= 1) {
+            var maxUi = cap * 100;
+            return {
+                emUI: true, max: maxUi,
+                maior: maxUi <= 30 ? 5 : 10,
+                menor: maxUi <= 50 ? 1 : 2
+            };
+        }
+        var maior = cap <= 3 ? 0.5 : cap <= 5 ? 1 : cap <= 10 ? 2 : Math.ceil(cap / 5);
+        return { emUI: false, max: cap, maior: maior, menor: maior / 5 };
+    }
+
+    function desenharMarcas() {
+        var e = escalaSeringa();
+        var partes = [];
+        var passos = Math.round(e.max / e.menor);
+        var razao = Math.round(e.maior / e.menor);
+
+        for (var i = 1; i <= passos; i++) {
+            var v = i * e.menor;
+            var x = (X0 - (v / e.max) * LARG).toFixed(2);
+            var grande = i % razao === 0;
+            var h = grande ? 12 : 6;
+            var cor = grande ? '#4A5F84' : '#2E3E5A';
+            partes.push('<line x1="' + x + '" y1="18" x2="' + x + '" y2="' + (18 + h) + '" stroke="' + cor + '" stroke-width="' + (grande ? 1.6 : 1) + '"/>');
+            if (grande) {
+                partes.push('<text x="' + x + '" y="74" fill="#7A8AA3" font-size="11" font-weight="600" font-family="Inter, sans-serif" text-anchor="middle">' + fmt(v, 2) + '</text>');
+            }
+        }
+        partes.push('<text x="' + X0 + '" y="74" fill="#7A8AA3" font-size="11" font-weight="600" font-family="Inter, sans-serif" text-anchor="middle">0</text>');
+        partes.push('<text x="260" y="92" fill="#5E6E86" font-size="10" font-weight="700" font-family="Inter, sans-serif" text-anchor="middle" letter-spacing="1.5">' + (e.emUI ? 'UNIDADES (UI)' : 'MILILITROS (ml)') + '</text>');
+        els.marcas.innerHTML = partes.join('');
+    }
+
+    function moverSeringa(fracao) {
+        var f = Math.max(0, Math.min(fracao, 1));
+        var w = f * LARG;
+        var x = X0 - w;
+        els.liquido.setAttribute('x', x.toFixed(2));
+        els.liquido.setAttribute('width', w.toFixed(2));
+        els.embolo.setAttribute('x', (x - 5).toFixed(2));
+        els.haste.setAttribute('width', Math.max(0, x - 14).toFixed(2));
+    }
+
+    /* ======================================================
+       CÁLCULO
+       ====================================================== */
+    function calcular() {
+        salvarEstado();
+
+        var completo = state.vial && state.dil && state.dose && state.syr;
+        els.btnLink.disabled = !completo;
+        if (!completo) { mostrarVazio(); return; }
+
+        var doseMg = state.unidade === 'mcg' ? state.dose / 1000 : state.dose;
+        var conc = state.vial / state.dil;              // mg/ml
+        var ml = doseMg / conc;                         // volume a aplicar
+        var ui = ml * 100;                              // U-100: 1 UI = 0,01 ml
+        var dosesExatas = state.vial / doseMg;
+        var dosesInteiras = Math.floor(dosesExatas + 1e-9);
+        var excede = ml > state.syr + 1e-9;
+        var doseMaiorQueFrasco = doseMg > state.vial + 1e-9;
+
+        ultimo = { ml: ml, ui: ui, excede: excede || doseMaiorQueFrasco };
+
+        // --- principal
+        els.resultado.classList.remove('vazio');
+        els.resultado.classList.toggle('erro', ultimo.excede);
+        els.resUI.innerHTML = fmt(ui, ui < 10 ? 2 : 1) + '<span class="u">UI</span>';
+        els.resMl.innerHTML = fmt(ml, 3) + ' ml <span>· seringa U-100</span>';
+        els.btnCopiar.disabled = ultimo.excede;
+        moverSeringa(ml / state.syr);
+
+        // --- detalhes
+        els.resConc.innerHTML = fmt(conc, 3) + ' mg/ml<small>' + fmt(conc * 10, 2) + ' mcg por UI</small>';
+        if (dosesInteiras < 1) {
+            els.resDoses.textContent = 'Menos de 1 dose';
+        } else {
+            var sobra = dosesExatas - dosesInteiras;
+            els.resDoses.innerHTML = dosesInteiras + ' ' + plural(dosesInteiras, 'dose', 'doses') +
+                (sobra > 0.01 ? '<small>+ sobra de ' + fmt(sobra * doseMg, 3) + ' mg</small>' : '');
+        }
+        els.resTempo.innerHTML = textoDuracao(dosesInteiras, state.freq);
+
+        // --- avisos
+        renderAvisos(gerarAvisos(ml, ui, doseMg, excede, doseMaiorQueFrasco));
+
+        // --- barra fixa
+        els.barra.classList.toggle('erro', ultimo.excede);
+        els.barraValor.textContent = ultimo.excede ? 'Excede a seringa' : fmt(ui, ui < 10 ? 2 : 1) + ' UI';
+        els.barraSub.textContent = ultimo.excede ? 'Veja a sugestão' : fmt(ml, 3) + ' ml · ' + fmt(state.dose, 3) + ' ' + state.unidade;
+        atualizarBarra();
+    }
+
+    function textoDuracao(doses, porSemana) {
+        if (doses < 1) return '--';
+        var dias = doses * (7 / porSemana);
+        if (dias < 14) {
+            var d = Math.round(dias);
+            return d + ' ' + plural(d, 'dia', 'dias');
+        }
+        var semanas = dias / 7;
+        var meses = dias / 30.44; // mês médio
+        var sTxt = fmt(semanas, 1) + ' ' + plural(Math.round(semanas * 10) / 10, 'semana', 'semanas');
+        var mTxt = '≈ ' + fmt(meses, 1) + ' ' + (Math.round(meses * 10) / 10 === 1 ? 'mês' : 'meses');
+        return sTxt + '<small>' + mTxt + '</small>';
+    }
+
+    function gerarAvisos(ml, ui, doseMg, excede, doseMaiorQueFrasco) {
+        var lista = [];
+        if (doseMaiorQueFrasco) {
+            lista.push({ tipo: 'vermelho', html: 'A dose (<b>' + fmt(doseMg, 3) + ' mg</b>) é maior que o total do frasco (<b>' + fmt(state.vial, 3) + ' mg</b>). Confira os valores.' });
+            return lista;
+        }
+        if (excede) {
+            var dilMax = state.syr * state.vial / doseMg;
+            var txt = 'O volume (<b>' + fmt(ml, 3) + ' ml</b>) não cabe na seringa de ' + fmt(state.syr, 2) + ' ml.';
+            txt += dilMax >= 0.1
+                ? ' Para caber, use no máximo <b>' + fmt(Math.floor(dilMax * 100) / 100, 2) + ' ml</b> de diluente, ou uma seringa maior.'
+                : ' Use uma seringa maior.';
+            lista.push({ tipo: 'vermelho', html: txt });
+            return lista;
+        }
+        if (ui < CONFIG.uiMinLegivel) {
+            var dilMin = (CONFIG.uiMinLegivel / 100) * state.vial / doseMg;
+            lista.push({ tipo: 'amarelo', html: 'Volume muito pequeno (' + fmt(ui, 2) + ' UI) — difícil de medir com precisão. Com <b>' + fmt(Math.ceil(dilMin * 10) / 10, 1) + ' ml</b> ou mais de diluente a medida fica mais segura.' });
+        } else if (state.syr <= 1 && Math.abs(ui - Math.round(ui)) > 0.05) {
+            lista.push({ tipo: 'amarelo', html: 'O valor não cai exatamente numa marca da seringa. Confira a graduação da sua seringa antes de aplicar.' });
+        }
+        return lista;
+    }
+
+    var ICONE_AVISO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4.5M12 17.2v.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+    function renderAvisos(lista) {
+        els.avisos.innerHTML = lista.map(function (a) {
+            return '<div class="aviso ' + a.tipo + '">' + ICONE_AVISO + '<span>' + a.html + '</span></div>';
+        }).join('');
+    }
+
+    function mostrarVazio() {
+        ultimo = null;
+        els.resultado.classList.add('vazio');
+        els.resultado.classList.remove('erro');
+        els.resUI.innerHTML = '--<span class="u">UI</span>';
+        els.resMl.textContent = faltando();
+        els.resConc.textContent = (state.vial && state.dil) ? fmt(state.vial / state.dil, 3) + ' mg/ml' : '--';
+        els.resDoses.textContent = '--';
+        els.resTempo.textContent = '--';
+        els.btnCopiar.disabled = true;
+        els.avisos.innerHTML = '';
+        moverSeringa(0);
+        atualizarBarra();
+    }
+
+    function faltando() {
+        var f = [];
+        if (!state.vial) f.push('frasco');
+        if (!state.dil) f.push('diluente');
+        if (!state.dose) f.push('dose');
+        if (!f.length) return '-- ml';
+        return 'Falta: ' + f.join(', ');
+    }
+
+    /* ======================================================
+       BARRA FIXA (aparece quando o resultado sai da tela)
+       ====================================================== */
+    function observarResultado() {
+        if (!('IntersectionObserver' in window)) return;
+        new IntersectionObserver(function (entradas) {
+            resultadoNaTela = entradas[0].isIntersecting;
+            atualizarBarra();
+        }, { threshold: 0.25 }).observe(els.resultado);
+    }
+
+    function atualizarBarra() {
+        var mostrar = !!ultimo && !resultadoNaTela;
+        els.barra.classList.toggle('visivel', mostrar);
+        els.barra.tabIndex = mostrar ? 0 : -1;
+        els.barra.setAttribute('aria-hidden', mostrar ? 'false' : 'true');
     }
 })();
 </script>

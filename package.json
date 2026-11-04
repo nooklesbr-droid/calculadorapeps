@@ -1,17 +1,19 @@
 {
   "name": "calculadora",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Calculadora PEPS — diluição e dosagem de peptídeos",
   "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
   },
-  "keywords": [],
-  "author": "",
+  "engines": {
+    "node": ">=18"
+  },
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "cors": "^2.8.6",
     "express": "^5.2.1"
   }
 }
