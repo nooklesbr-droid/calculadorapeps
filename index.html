@@ -412,8 +412,14 @@ button { cursor: pointer; }
 .anuncios h2 { color: var(--t2); font-size: .92rem; font-weight: 500; text-align: center; margin-bottom: 16px; }
 .anuncios h2 span { color: var(--vip); font-weight: 700; }
 
-.produtos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.produtos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+/* 5º card (ímpar) ocupa a linha inteira, em formato horizontal */
+.produto:last-child:nth-child(odd) { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; }
+.produto:last-child:nth-child(odd) .produto-img { flex: 0 0 110px; margin-bottom: 0; }
+.produto:last-child:nth-child(odd) .produto-titulo { flex: 1; text-align: left; margin-bottom: 0; min-height: 0; }
+.produto:last-child:nth-child(odd) .produto-btn { margin-top: 0; flex: 0 0 auto; padding: 6px 12px; }
 .produto {
+    min-width: 0;
     display: flex; flex-direction: column;
     background: var(--card);
     border: 1px solid var(--borda);
@@ -424,7 +430,8 @@ button { cursor: pointer; }
 }
 .produto:hover { border-color: var(--vip); transform: translateY(-3px); box-shadow: 0 6px 16px rgba(255,241,89,.12); }
 .produto-img { height: 92px; background: #fff; border-radius: 8px; padding: 6px; margin-bottom: 10px; display: grid; place-items: center; }
-.produto-img img { width: 100%; height: 100%; object-fit: contain; }
+.produto-img { overflow: hidden; }
+.produto-img img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
 .produto-titulo {
     color: var(--t1); font-size: .72rem; line-height: 1.4; text-align: center;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
@@ -509,6 +516,10 @@ button { cursor: pointer; }
     .produtos::-webkit-scrollbar { height: 5px; }
     .produtos::-webkit-scrollbar-thumb { background: rgba(255,241,89,.3); border-radius: 10px; }
     .produto { flex: 0 0 140px; scroll-snap-align: start; }
+    .produto:last-child:nth-child(odd) { flex-direction: column; align-items: stretch; gap: 0; }
+    .produto:last-child:nth-child(odd) .produto-img { flex: none; margin-bottom: 10px; }
+    .produto:last-child:nth-child(odd) .produto-titulo { text-align: center; margin-bottom: 10px; min-height: 2.8em; }
+    .produto:last-child:nth-child(odd) .produto-btn { margin-top: auto; }
 }
 </style>
 </head>
